@@ -76,7 +76,7 @@ export function createBaseIsland(palette) {
   }
   deckGeo.computeVertexNormals();
   const deck = new THREE.Mesh(deckGeo, palette.sidewalk);
-  deck.position.y = -0.06;
+  deck.position.y = -0.13;
   deck.receiveShadow = true;
   deck.castShadow = true;
   group.add(deck);
@@ -384,22 +384,28 @@ export function createBaseIsland(palette) {
 
   // 7. Smooth Sculpted Rolling Maungawhau / Mt Eden Volcanic Cone
   const mtEden = new THREE.Group();
-  mtEden.position.set(-4.35, 0.12, 2.05);
+  mtEden.position.set(-4.15, 0.12, 1.85);
 
-  const parkPad = new THREE.Mesh(new THREE.CylinderGeometry(2.12, 2.24, 0.1, 48), palette.grass);
+  const parkPad = new THREE.Mesh(new THREE.CylinderGeometry(1.68, 1.78, 0.1, 48), palette.grass);
   parkPad.position.y = 0.04;
   parkPad.receiveShadow = true;
   mtEden.add(parkPad);
 
+  const parkKerb = new THREE.Mesh(new THREE.TorusGeometry(1.76, 0.045, 10, 48), palette.basaltRock);
+  parkKerb.rotation.x = Math.PI / 2;
+  parkKerb.position.y = 0.05;
+  parkKerb.receiveShadow = true;
+  mtEden.add(parkKerb);
+
   // High-resolution smooth-shaded volcanic hill with subtle contoured pā terraces
-  const coneGeo = new THREE.CylinderGeometry(0.92, 2.08, 1.5, 64, 24, true);
+  const coneGeo = new THREE.CylinderGeometry(0.78, 1.62, 1.48, 64, 24, true);
   const cPos = coneGeo.attributes.position;
   for (let i = 0; i < cPos.count; i++) {
     const vx = cPos.getX(i);
     const vy = cPos.getY(i);
     const vz = cPos.getZ(i);
     const angle = Math.atan2(vz, vx);
-    const hNorm = (vy + 0.75) / 1.5;
+    const hNorm = (vy + 0.74) / 1.48;
     // Smooth S-curve slope profile + gentle organic lobes
     const bellCurve = 1 + Math.sin(hNorm * Math.PI) * 0.12;
     const ridge = Math.sin(angle * 3 + 0.5) * 0.065 + Math.cos(angle * 2 - 0.3) * 0.05;
@@ -423,14 +429,14 @@ export function createBaseIsland(palette) {
   mtEden.add(coneMesh);
 
   // Smooth rounded crater rim + smooth recessed grassy crater bowl
-  const rimTop = new THREE.Mesh(new THREE.TorusGeometry(0.91, 0.12, 18, 48), palette.grassBright);
+  const rimTop = new THREE.Mesh(new THREE.TorusGeometry(0.77, 0.12, 18, 48), palette.grassBright);
   rimTop.rotation.x = Math.PI / 2;
   rimTop.position.y = 1.54;
   rimTop.castShadow = true;
   mtEden.add(rimTop);
 
   const craterBowl = new THREE.Mesh(
-    new THREE.SphereGeometry(0.9, 32, 18, 0, Math.PI * 2, Math.PI * 0.5, Math.PI * 0.5),
+    new THREE.SphereGeometry(0.76, 32, 18, 0, Math.PI * 2, Math.PI * 0.5, Math.PI * 0.5),
     new THREE.MeshStandardMaterial({ color: 0x4b7d46, roughness: 0.85, side: THREE.DoubleSide })
   );
   craterBowl.scale.set(1, 0.58, 1);
@@ -440,9 +446,9 @@ export function createBaseIsland(palette) {
 
   // Smooth rounded volcanic scoria boulders
   [
-    [1.35, 0.46, 0.65, 0.2],
-    [-1.4, 0.38, 0.75, 0.22],
-    [0.55, 0.92, -1.05, 0.16],
+    [1.08, 0.42, 0.52, 0.18],
+    [-1.12, 0.36, 0.58, 0.19],
+    [0.45, 0.88, -0.85, 0.15],
   ].forEach(([rx, ry, rz, rr]) => {
     const rock = new THREE.Mesh(new THREE.SphereGeometry(rr, 14, 12), palette.basaltRock);
     rock.scale.set(1.2, 0.75, 0.95);
@@ -457,7 +463,7 @@ export function createBaseIsland(palette) {
   for (let s = 0; s <= 16; s++) {
     const t = s / 16;
     const ang = -0.35 + t * 1.2;
-    const rad = 1.98 - t * 1.02;
+    const rad = 1.56 - t * 0.80;
     const sy = 0.14 + t * 1.44;
     trailPts.push(new THREE.Vector3(Math.cos(ang) * rad, sy, Math.sin(ang) * rad));
   }
@@ -471,11 +477,11 @@ export function createBaseIsland(palette) {
 
   // Circular wooden summit viewing deck & trig beacon
   const deckRim = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.05, 20), palette.woodBoardwalk);
-  deckRim.position.set(Math.cos(0.85) * 0.94, 1.62, Math.sin(0.85) * 0.94);
+  deckRim.position.set(Math.cos(0.85) * 0.79, 1.62, Math.sin(0.85) * 0.79);
   mtEden.add(deckRim);
 
   const trigPole = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.032, 0.28, 12), palette.steel);
-  trigPole.position.set(Math.cos(0.85) * 0.94, 1.78, Math.sin(0.85) * 0.94);
+  trigPole.position.set(Math.cos(0.85) * 0.79, 1.78, Math.sin(0.85) * 0.79);
   mtEden.add(trigPole);
 
   tagLandmark(

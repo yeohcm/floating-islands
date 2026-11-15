@@ -64,7 +64,8 @@ sunLight.shadow.camera.left = -12;
 sunLight.shadow.camera.right = 12;
 sunLight.shadow.camera.top = 12;
 sunLight.shadow.camera.bottom = -12;
-sunLight.shadow.bias = -0.0005;
+sunLight.shadow.bias = -0.0006;
+sunLight.shadow.normalBias = 0.03;
 scene.add(sunLight);
 
 // Soft bounce fill light from Waitemata Harbour side
@@ -217,7 +218,7 @@ document.querySelectorAll('.swatch').forEach((btn) => {
 let isPlaying = true;
 togglePlayBtn.addEventListener('click', () => {
   isPlaying = !isPlaying;
-  trainSystem.action.paused = !isPlaying;
+  trainSystem.mixer.timeScale = isPlaying ? 1 : 0;
   togglePlayBtn.textContent = isPlaying ? '⏸ Pause' : '▶ Play';
   togglePlayBtn.classList.toggle('active', !isPlaying);
 });

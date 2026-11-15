@@ -37,7 +37,7 @@ function createPohutukawa(palette, scale = 1) {
     leaf.position.set(cx, cy, cz);
     leaf.scale.set(1.08, 0.72, 1.04);
     leaf.castShadow = true;
-    leaf.receiveShadow = true;
+    leaf.receiveShadow = false;
     tree.add(leaf);
 
     if (i < 3) {
@@ -46,7 +46,7 @@ function createPohutukawa(palette, scale = 1) {
         palette.pohutukawaBlossom
       );
       blossom.scale.set(1.15, 0.68, 1.15);
-      blossom.position.set(cx * 1.1, cy + r * 0.46, cz * 1.1);
+      blossom.position.set(cx * 1.05, cy + r * 0.56, cz * 1.05);
       tree.add(blossom);
     }
   });
@@ -69,7 +69,7 @@ function createCabbageTree(palette, scale = 1) {
     const a = (i / 8) * Math.PI * 2;
     const tuft = new THREE.Mesh(new THREE.SphereGeometry(0.11, 14, 12), palette.grassBright);
     tuft.scale.set(0.65, 1.35, 0.65);
-    tuft.position.set(Math.cos(a) * 0.065, 0.62, Math.sin(a) * 0.065);
+    tuft.position.set(Math.cos(a) * 0.065, 0.62 + (i % 2) * 0.018, Math.sin(a) * 0.065);
     tuft.rotation.z = -Math.cos(a) * 0.55;
     tuft.rotation.x = Math.sin(a) * 0.55;
     tree.add(tuft);
@@ -646,12 +646,12 @@ export function createCityDetails(palette) {
 
   // 9. Native Trees + Swan-neck Streetlamps
   const pohutukawaPositions = [
-    [-5.55, 0.14, 1.35, 0.95],
-    [-3.15, 0.14, 3.65, 1.1],
-    [-4.3, 0.14, 0.15, 0.85],
+    [-5.55, 0.12, -0.95, 0.9],
+    [-4.95, 0.12, 3.65, 0.95],
+    [-4.75, 0.12, -0.35, 0.85],
     [-3.6, 0.18, -1.7, 0.9],
-    [1.85, 0.14, 3.35, 0.85],
-    [-2.5, 0.14, 3.65, 0.9],
+    [1.45, 0.12, 1.85, 0.72],
+    [1.45, 0.12, -1.65, 0.78],
     [7.22, 0.55, -3.45, 0.85],
   ];
   pohutukawaPositions.forEach(([x, y, z, s]) => {
@@ -661,9 +661,9 @@ export function createCityDetails(palette) {
   });
 
   [
-    [-4.9, 0.55, 2.7, 0.9],
-    [-3.7, 0.55, 2.4, 0.85],
-    [-2.75, 0.16, -1.3, 0.95],
+    [-4.65, 0.56, 2.32, 0.9],
+    [-3.55, 0.54, 2.15, 0.85],
+    [-2.75, 0.18, -1.3, 0.95],
   ].forEach(([x, y, z, s]) => {
     const ct = createCabbageTree(palette, s);
     ct.position.set(x, y, z);

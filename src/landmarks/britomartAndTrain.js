@@ -2,174 +2,318 @@ import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { createSignTexture, tagLandmark } from '../materials.js';
 
-function createAMSideTexture(hasCab, isTail) {
+function createAMSideTexture(hasCab, isTail, carLabel = 'AMA 103') {
   const canvas = document.createElement('canvas');
-  canvas.width = 512;
-  canvas.height = 160;
+  canvas.width = 1024;
+  canvas.height = 320;
   const ctx = canvas.getContext('2d');
 
-  // Brushed stainless steel base
-  const grad = ctx.createLinearGradient(0, 0, 0, 160);
-  grad.addColorStop(0, '#e2e8f0');
-  grad.addColorStop(0.55, '#cbd5e1');
-  grad.addColorStop(1, '#94a3b8');
+  // Brushed stainless-steel metallic base with subtle top-to-bottom sheen
+  const grad = ctx.createLinearGradient(0, 0, 0, 320);
+  grad.addColorStop(0, '#eef2f7');
+  grad.addColorStop(0.54, '#cfd8e3');
+  grad.addColorStop(0.86, '#9fb0c3');
+  grad.addColorStop(1, '#475569');
   ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, 512, 160);
+  ctx.fillRect(0, 0, 1024, 320);
 
-  // Subtle horizontal stainless corrugation lines
-  ctx.fillStyle = 'rgba(255,255,255,0.24)';
-  for (let y = 96; y < 148; y += 8) {
-    ctx.fillRect(0, y, 512, 2);
-  }
-  ctx.fillStyle = 'rgba(15,23,42,0.12)';
-  for (let y = 98; y < 148; y += 8) {
-    ctx.fillRect(0, y, 512, 1);
+  // Fine stainless-steel horizontal body corrugation flutes
+  for (let y = 188; y < 292; y += 9) {
+    ctx.fillStyle = 'rgba(255,255,255,0.28)';
+    ctx.fillRect(0, y, 1024, 2);
+    ctx.fillStyle = 'rgba(15,23,42,0.14)';
+    ctx.fillRect(0, y + 2, 1024, 2);
   }
 
-  // Dark navy blue upper window band
-  ctx.fillStyle = '#0f284f';
-  ctx.fillRect(0, 14, 512, 66);
+  // Lower skirt band & yellow jacking point markers
+  ctx.fillStyle = '#334155';
+  ctx.fillRect(0, 294, 1024, 26);
+  ctx.fillStyle = '#facc15';
+  [74, 938].forEach((jx) => ctx.fillRect(jx, 298, 12, 8));
 
-  // Thin silver pin-stripe at bottom of navy band
-  ctx.fillStyle = '#f1f5f9';
-  ctx.fillRect(0, 80, 512, 4);
+  // AT Metro deep navy-blue upper window band
+  ctx.fillStyle = '#0b2244';
+  ctx.fillRect(0, 24, 1024, 138);
 
-  // Rounded-corner passenger windows inside navy band
+  // Signature crimson & crisp silver twin waist pin-stripes
+  ctx.fillStyle = '#e11d48';
+  ctx.fillRect(0, 162, 1024, 6);
+  ctx.fillStyle = '#f8fafc';
+  ctx.fillRect(0, 168, 1024, 5);
+
+  // Subtle vertical body panel bolster seams
+  ctx.fillStyle = 'rgba(15,23,42,0.16)';
+  [218, 366, 658, 806].forEach((sx) => ctx.fillRect(sx, 174, 2, 120));
+
+  // Panoramic rounded-corner passenger windows with warm interior & seated silhouettes
   const drawWindow = (x, w) => {
-    ctx.fillStyle = '#1e293b';
+    ctx.fillStyle = '#162032';
     ctx.beginPath();
-    ctx.roundRect(x - 2, 22, w + 4, 48, 8);
+    ctx.roundRect(x - 4, 40, w + 8, 104, 14);
     ctx.fill();
-    ctx.fillStyle = '#ffe5a3';
+
+    const winGrad = ctx.createLinearGradient(x, 44, x, 140);
+    winGrad.addColorStop(0, '#ffd89a');
+    winGrad.addColorStop(1, '#fff1c9');
+    ctx.fillStyle = winGrad;
     ctx.beginPath();
-    ctx.roundRect(x, 24, w, 44, 6);
+    ctx.roundRect(x, 44, w, 96, 11);
+    ctx.fill();
+
+    // Subtle navy seat backs & passenger silhouettes inside cabin
+    ctx.fillStyle = 'rgba(15,34,68,0.34)';
+    ctx.beginPath();
+    ctx.roundRect(x + 12, 92, 24, 48, 8);
+    ctx.roundRect(x + w - 36, 92, 24, 48, 8);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(x + 24, 82, 10, 0, Math.PI * 2);
+    ctx.arc(x + w - 24, 82, 10, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Hopper transom bar + diagonal glass sky reflection
+    ctx.fillStyle = 'rgba(15,23,42,0.45)';
+    ctx.fillRect(x, 68, w, 4);
+    ctx.fillStyle = 'rgba(255,255,255,0.28)';
+    ctx.beginPath();
+    ctx.moveTo(x + 10, 46);
+    ctx.lineTo(x + 42, 46);
+    ctx.lineTo(x + 18, 138);
+    ctx.lineTo(x + 4, 138);
+    ctx.closePath();
     ctx.fill();
   };
 
-  // Two bright safety-yellow twin doors per side (CAF AM Class signature!)
-  const doorPositions = [118, 344];
+  // Two high-visibility safety-yellow twin sliding plug doors per side
+  const doorPositions = [234, 682];
   doorPositions.forEach((dx) => {
+    // Dark recessed door aperture frame
+    ctx.fillStyle = '#1e293b';
+    ctx.beginPath();
+    ctx.roundRect(dx - 3, 24, 114, 270, 8);
+    ctx.fill();
+
     ctx.fillStyle = '#ffd000';
     ctx.beginPath();
-    ctx.roundRect(dx, 14, 54, 136, 4);
+    ctx.roundRect(dx, 26, 108, 266, 6);
     ctx.fill();
-    // Door center vertical rubber seal
+
+    // Central vertical black rubber door seal
+    ctx.fillStyle = '#0f172a';
+    ctx.fillRect(dx + 51, 26, 6, 266);
+
+    // Twin door passenger windows
     ctx.fillStyle = '#1e293b';
-    ctx.fillRect(dx + 25, 14, 4, 136);
-    // Door twin windows
-    ctx.fillStyle = '#ffe5a3';
     ctx.beginPath();
-    ctx.roundRect(dx + 6, 26, 15, 42, 4);
-    ctx.roundRect(dx + 33, 26, 15, 42, 4);
+    ctx.roundRect(dx + 10, 44, 34, 96, 8);
+    ctx.roundRect(dx + 64, 44, 34, 96, 8);
     ctx.fill();
-    ctx.strokeStyle = '#334155';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(dx, 14, 54, 136);
+    ctx.fillStyle = '#ffeab0';
+    ctx.beginPath();
+    ctx.roundRect(dx + 13, 47, 28, 90, 6);
+    ctx.roundRect(dx + 67, 47, 28, 90, 6);
+    ctx.fill();
+
+    // Illuminated green door-release push buttons
+    ctx.fillStyle = '#16a34a';
+    ctx.beginPath();
+    ctx.arc(dx + 42, 186, 5, 0, Math.PI * 2);
+    ctx.arc(dx + 66, 186, 5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Lower stainless kick-plate & warning yellow sill
+    ctx.fillStyle = '#cbd5e1';
+    ctx.fillRect(dx + 2, 274, 104, 10);
+    ctx.fillStyle = '#f59e0b';
+    ctx.fillRect(dx + 2, 284, 104, 6);
   });
 
-  drawWindow(32, 70);
-  drawWindow(190, 68);
-  drawWindow(264, 68);
-  drawWindow(414, 66);
+  drawWindow(62, 146);
+  drawWindow(374, 134);
+  drawWindow(518, 134);
+  drawWindow(816, 138);
+
+  // AT Metro circular emblem + car unit number on central stainless panel
+  ctx.fillStyle = '#0b2244';
+  ctx.beginPath();
+  ctx.arc(432, 224, 18, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#f8fafc';
+  ctx.font = 'bold 16px sans-serif';
+  ctx.fillText('AT', 421, 230);
+
+  ctx.fillStyle = '#0f172a';
+  ctx.font = 'bold 20px monospace';
+  ctx.fillText(carLabel, 464, 231);
 
   if (hasCab) {
     ctx.save();
     if (isTail) {
-      ctx.translate(512, 0);
+      ctx.translate(1024, 0);
       ctx.scale(-1, 1);
     }
-    ctx.fillStyle = '#0f284f';
+    // Swept aerodynamic navy cab side wrap
+    ctx.fillStyle = '#0b2244';
     ctx.beginPath();
-    ctx.moveTo(474, 14);
-    ctx.lineTo(512, 14);
-    ctx.lineTo(512, 128);
-    ctx.lineTo(445, 128);
+    ctx.moveTo(940, 24);
+    ctx.lineTo(1024, 24);
+    ctx.lineTo(1024, 250);
+    ctx.lineTo(892, 250);
     ctx.closePath();
     ctx.fill();
 
+    // Cab driver side drop-window
+    ctx.fillStyle = '#0f172a';
+    ctx.beginPath();
+    ctx.moveTo(958, 44);
+    ctx.lineTo(1008, 44);
+    ctx.lineTo(1008, 134);
+    ctx.lineTo(936, 134);
+    ctx.closePath();
+    ctx.fill();
+
+    // Angled high-visibility yellow cab nose skirt
     ctx.fillStyle = '#ffd000';
     ctx.beginPath();
-    ctx.moveTo(458, 112);
-    ctx.lineTo(512, 92);
-    ctx.lineTo(512, 152);
-    ctx.lineTo(432, 152);
+    ctx.moveTo(912, 224);
+    ctx.lineTo(1024, 184);
+    ctx.lineTo(1024, 294);
+    ctx.lineTo(862, 294);
     ctx.closePath();
     ctx.fill();
 
-    ctx.fillStyle = '#f8fafc';
+    // Crimson cab stripe accent
+    ctx.fillStyle = '#e11d48';
     ctx.beginPath();
-    ctx.roundRect(462, 88, 22, 12, 3);
+    ctx.moveTo(886, 226);
+    ctx.lineTo(1024, 178);
+    ctx.lineTo(1024, 186);
+    ctx.lineTo(886, 234);
+    ctx.closePath();
     ctx.fill();
-    ctx.fillStyle = '#0f284f';
-    ctx.font = 'bold 10px sans-serif';
-    ctx.fillText('AT', 466, 98);
     ctx.restore();
   }
 
   const tex = new THREE.CanvasTexture(canvas);
   tex.colorSpace = THREE.SRGBColorSpace;
-  tex.anisotropy = 4;
+  tex.anisotropy = 8;
   return tex;
 }
 
-function buildTrainCar({ isLead = false, isTail = false, hasPantograph = false, palette }) {
+function buildTrainCar({
+  isLead = false,
+  isTail = false,
+  hasPantograph = false,
+  carLabel = 'AMT 103',
+  destinationText = 'BRITOMART',
+  palette,
+}) {
   const car = new THREE.Group();
 
   const navyMat = new THREE.MeshStandardMaterial({
-    color: 0x0f284f,
-    roughness: 0.25,
-    metalness: 0.3,
+    color: 0x0b2244,
+    roughness: 0.24,
+    metalness: 0.34,
   });
   const stainlessMat = new THREE.MeshStandardMaterial({
-    color: 0xd1d8e0,
-    roughness: 0.24,
-    metalness: 0.72,
+    color: 0xd5dde6,
+    roughness: 0.22,
+    metalness: 0.74,
   });
   const yellowSafetyMat = new THREE.MeshStandardMaterial({
     color: 0xffd000,
-    roughness: 0.28,
-    metalness: 0.15,
+    roughness: 0.26,
+    metalness: 0.14,
   });
   const darkRoof = new THREE.MeshStandardMaterial({
-    color: 0x2a323d,
-    roughness: 0.5,
-    metalness: 0.45,
+    color: 0x262f3b,
+    roughness: 0.52,
+    metalness: 0.44,
+  });
+  const hvConduitMat = new THREE.MeshStandardMaterial({
+    color: 0xea580c,
+    roughness: 0.45,
   });
 
-  const sideTex = createAMSideTexture(isLead || isTail, isTail);
+  const sideTex = createAMSideTexture(isLead || isTail, isTail, carLabel);
   const sideMat = palette.registerEmissive(
     new THREE.MeshStandardMaterial({
       map: sideTex,
       emissiveMap: sideTex,
       emissive: 0xffd885,
-      emissiveIntensity: 0.12,
-      roughness: 0.26,
-      metalness: 0.5,
+      emissiveIntensity: 0.14,
+      roughness: 0.24,
+      metalness: 0.48,
     }),
-    0.12,
-    0.75
+    0.14,
+    0.78
   );
 
   const len = 1.04;
-  const width = 0.38;
-  const height = 0.34;
+  const width = 0.36;
+  const height = 0.33;
 
-  // Smooth rounded underframe skirt & bogies with cylindrical wheels
+  // Underframe chassis + underfloor traction inverter / transformer / air brake boxes
   const chassis = new THREE.Mesh(
-    new RoundedBoxGeometry(width * 0.92, 0.08, len, 3, 0.02),
+    new RoundedBoxGeometry(width * 0.9, 0.062, len * 0.94, 3, 0.018),
     darkRoof
   );
-  chassis.position.y = 0.065;
+  chassis.position.y = 0.074;
   chassis.castShadow = true;
   car.add(chassis);
 
-  [-0.32, 0.32].forEach((wz) => {
-    const bogie = new THREE.Mesh(
-      new RoundedBoxGeometry(width * 0.84, 0.055, 0.22, 2, 0.015),
+  [
+    [-0.09, 0.042, 0.09, 0.16],
+    [0.09, 0.046, 0.09, 0.16],
+    [0.0, 0.04, 0.14, 0.11],
+  ].forEach(([ux, uy, uw, ud], idx) => {
+    const eq = new THREE.Mesh(
+      new RoundedBoxGeometry(uw, uy, ud, 2, 0.008),
       palette.steelDark
     );
-    bogie.position.set(0, 0.032, wz);
-    car.add(bogie);
+    eq.position.set(ux, 0.052, (idx - 1) * 0.11);
+    car.add(eq);
+  });
+
+  // Two detailed powered/trailer bogies, each with 2 steel axles & 4 flanged cylindrical wheels
+  const wheelGeo = new THREE.CylinderGeometry(0.032, 0.032, 0.02, 16);
+  const rimGeo = new THREE.CylinderGeometry(0.022, 0.022, 0.022, 14);
+  const axleGeo = new THREE.CylinderGeometry(0.011, 0.011, 0.245, 10);
+  const springGeo = new THREE.CylinderGeometry(0.014, 0.014, 0.032, 10);
+
+  [-0.32, 0.32].forEach((wz) => {
+    const bogieFrame = new THREE.Mesh(
+      new RoundedBoxGeometry(width * 0.8, 0.04, 0.22, 2, 0.012),
+      palette.steelDark
+    );
+    bogieFrame.position.set(0, 0.042, wz);
+    car.add(bogieFrame);
+
+    [-0.135, 0.135].forEach((sx) => {
+      const spring = new THREE.Mesh(springGeo, palette.steel);
+      spring.position.set(sx, 0.048, wz);
+      car.add(spring);
+    });
+
+    [-0.068, 0.068].forEach((axOff) => {
+      const az = wz + axOff;
+      const axle = new THREE.Mesh(axleGeo, palette.steelDark);
+      axle.rotation.z = Math.PI / 2;
+      axle.position.set(0, 0.032, az);
+      car.add(axle);
+
+      [-0.115, 0.115].forEach((wx) => {
+        const wheel = new THREE.Mesh(wheelGeo, palette.steelDark);
+        wheel.rotation.z = Math.PI / 2;
+        wheel.position.set(wx, 0.032, az);
+        car.add(wheel);
+
+        const rim = new THREE.Mesh(rimGeo, palette.steel);
+        rim.rotation.z = Math.PI / 2;
+        rim.position.set(wx, 0.032, az);
+        car.add(rim);
+      });
+    });
   });
 
   // Smooth rounded stainless-steel carriage body
@@ -182,7 +326,7 @@ function buildTrainCar({ isLead = false, isTail = false, hasPantograph = false, 
     stainlessMat,
   ];
   const body = new THREE.Mesh(
-    new RoundedBoxGeometry(width, height - 0.03, len * 0.96, 4, 0.038),
+    new RoundedBoxGeometry(width, height - 0.04, len * 0.95, 4, 0.036),
     bodyMats
   );
   body.position.y = 0.235;
@@ -190,189 +334,334 @@ function buildTrainCar({ isLead = false, isTail = false, hasPantograph = false, 
   body.receiveShadow = true;
   car.add(body);
 
-  // Smooth arched roof fairing & rounded HVAC pod
+  // Arched roof fairing, twin longitudinal roof ribs, 25 kV orange conduit, & dual HVAC pods
   const roof = new THREE.Mesh(
-    new RoundedBoxGeometry(width * 0.84, 0.048, len * 0.9, 3, 0.02),
+    new RoundedBoxGeometry(width * 0.86, 0.042, len * 0.91, 3, 0.018),
     darkRoof
   );
-  roof.position.y = 0.40;
+  roof.position.y = 0.39;
   car.add(roof);
 
-  const hvac = new THREE.Mesh(
-    new RoundedBoxGeometry(width * 0.58, 0.038, 0.28, 3, 0.016),
-    palette.concreteDark
+  [-0.085, 0.085].forEach((rx) => {
+    const rib = new THREE.Mesh(
+      new RoundedBoxGeometry(0.018, 0.016, len * 0.86, 2, 0.004),
+      palette.steelDark
+    );
+    rib.position.set(rx, 0.412, 0);
+    car.add(rib);
+  });
+
+  const conduit = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.008, 0.008, len * 0.82, 8),
+    hvConduitMat
   );
-  hvac.position.set(0, 0.43, isLead ? -0.1 : isTail ? 0.1 : 0);
-  car.add(hvac);
+  conduit.rotation.x = Math.PI / 2;
+  conduit.position.set(0.04, 0.414, 0);
+  car.add(conduit);
 
-  // Smooth rounded accordion gangway bellows
+  const hvacCenterZ = isLead ? -0.13 : isTail ? 0.13 : 0.0;
+  [hvacCenterZ - 0.12, hvacCenterZ + 0.14].forEach((hz, idx) => {
+    if ((isLead || isTail) && idx === 1) return;
+    const hvac = new THREE.Mesh(
+      new RoundedBoxGeometry(width * 0.6, 0.038, 0.22, 3, 0.014),
+      palette.concrete
+    );
+    hvac.position.set(0, 0.422, hz);
+    car.add(hvac);
+
+    [-0.055, 0.055].forEach((fz) => {
+      const fan = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.042, 0.042, 0.042, 14),
+        darkRoof
+      );
+      fan.position.set(0, 0.424, hz + fz);
+      car.add(fan);
+    });
+  });
+
+  // Multi-ring Articulated Accordion Gangway Bellows + inter-car coupler bar
   const bellowMat = new THREE.MeshStandardMaterial({ color: 0x1e242c, roughness: 0.85 });
-  if (!isLead) {
-    const bFront = new THREE.Mesh(
-      new RoundedBoxGeometry(width * 0.74, 0.25, 0.08, 3, 0.025),
-      bellowMat
+  const buildGangway = (gz) => {
+    [-0.024, 0, 0.024].forEach((dz) => {
+      const ring = new THREE.Mesh(
+        new RoundedBoxGeometry(width * 0.74, 0.245, 0.02, 3, 0.008),
+        bellowMat
+      );
+      ring.position.set(0, 0.225, gz + dz);
+      car.add(ring);
+    });
+    const drawbar = new THREE.Mesh(
+      new RoundedBoxGeometry(0.05, 0.03, 0.09, 2, 0.006),
+      palette.steelDark
     );
-    bFront.position.set(0, 0.23, len * 0.50);
-    car.add(bFront);
-  }
-  if (!isTail) {
-    const bRear = new THREE.Mesh(
-      new RoundedBoxGeometry(width * 0.74, 0.25, 0.08, 3, 0.025),
-      bellowMat
-    );
-    bRear.position.set(0, 0.23, -len * 0.50);
-    car.add(bRear);
-  }
+    drawbar.position.set(0, 0.07, gz);
+    car.add(drawbar);
+  };
+  if (!isLead) buildGangway(len * 0.50);
+  if (!isTail) buildGangway(-len * 0.50);
 
-  // Smooth Aerodynamic Sloped Nose Cab (AMA / AMP)
+  // Contoured Aerodynamic CAF AM Class Cab Front (AMA / AMP)
   if (isLead || isTail) {
     const dir = isLead ? 1 : -1;
     const cabGroup = new THREE.Group();
-    cabGroup.position.set(0, 0.2, dir * (len * 0.47));
+    cabGroup.position.set(0, 0.2, dir * (len * 0.465));
     if (isTail) cabGroup.rotation.y = Math.PI;
 
-    // Rounded yellow front safety nose apron
+    // Obstacle deflector snowplow cowcatcher + Scharfenberg automatic coupler
+    const plow = new THREE.Mesh(
+      new RoundedBoxGeometry(width * 0.86, 0.05, 0.11, 3, 0.015),
+      palette.steelDark
+    );
+    plow.position.set(0, -0.116, 0.05);
+    cabGroup.add(plow);
+
+    const coupler = new THREE.Mesh(
+      new RoundedBoxGeometry(0.085, 0.04, 0.09, 2, 0.01),
+      palette.steelDark
+    );
+    coupler.position.set(0, -0.105, 0.14);
+    cabGroup.add(coupler);
+
+    // Angled high-visibility yellow safety nose apron
     const yellowApron = new THREE.Mesh(
-      new RoundedBoxGeometry(width * 0.97, 0.115, 0.17, 4, 0.035),
+      new RoundedBoxGeometry(width * 0.96, 0.108, 0.17, 4, 0.034),
       yellowSafetyMat
     );
-    yellowApron.position.set(0, -0.065, 0.065);
+    yellowApron.position.set(0, -0.058, 0.068);
+    yellowApron.rotation.x = 0.12;
     yellowApron.castShadow = true;
     cabGroup.add(yellowApron);
 
-    const coupler = new THREE.Mesh(
-      new RoundedBoxGeometry(0.11, 0.045, 0.08, 2, 0.012),
-      palette.steelDark
-    );
-    coupler.position.set(0, -0.11, 0.135);
-    cabGroup.add(coupler);
-
-    // Smooth curved navy blue cab surround mask
+    // Swept navy cab mask surround + crimson pin-stripe lip
     const cabMask = new THREE.Mesh(
-      new RoundedBoxGeometry(width * 0.95, 0.195, 0.16, 4, 0.04),
+      new RoundedBoxGeometry(width * 0.94, 0.188, 0.16, 4, 0.04),
       navyMat
     );
-    cabMask.position.set(0, 0.072, 0.045);
-    cabMask.rotation.x = 0.28;
+    cabMask.position.set(0, 0.068, 0.042);
+    cabMask.rotation.x = 0.3;
     cabMask.castShadow = true;
     cabGroup.add(cabMask);
 
-    // Curved glossy black windshield
-    const windshield = new THREE.Mesh(
-      new RoundedBoxGeometry(width * 0.82, 0.12, 0.04, 3, 0.016),
-      new THREE.MeshStandardMaterial({ color: 0x0b1220, roughness: 0.08, metalness: 0.9 })
+    const crimsonLip = new THREE.Mesh(
+      new RoundedBoxGeometry(width * 0.96, 0.016, 0.05, 2, 0.005),
+      new THREE.MeshStandardMaterial({ color: 0xe11d48, roughness: 0.35 })
     );
-    windshield.position.set(0, 0.085, 0.11);
-    windshield.rotation.x = 0.28;
+    crimsonLip.position.set(0, -0.006, 0.132);
+    cabGroup.add(crimsonLip);
+
+    // Flush-mounted curved dark-glass windshield + twin wiper blades + warm cab console
+    const windshield = new THREE.Mesh(
+      new RoundedBoxGeometry(width * 0.8, 0.116, 0.04, 3, 0.015),
+      new THREE.MeshStandardMaterial({ color: 0x09111e, roughness: 0.08, metalness: 0.88 })
+    );
+    windshield.position.set(0, 0.076, 0.106);
+    windshield.rotation.x = 0.3;
     cabGroup.add(windshield);
 
+    [-0.045, 0.055].forEach((wx) => {
+      const wiper = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.004, 0.004, 0.075, 6),
+        palette.steelDark
+      );
+      wiper.position.set(wx, 0.062, 0.129);
+      wiper.rotation.set(0.3, 0, -0.35);
+      cabGroup.add(wiper);
+    });
+
+    // Side cab CCTV wing mirrors
+    [-1, 1].forEach((sideSign) => {
+      const mirror = new THREE.Mesh(
+        new RoundedBoxGeometry(0.022, 0.052, 0.028, 2, 0.006),
+        palette.steelDark
+      );
+      mirror.position.set(sideSign * (width * 0.52), 0.07, 0.05);
+      cabGroup.add(mirror);
+    });
+
+    // Recessed headlight clusters (warm white LED on Lead, ruby red LED on Tail)
     const lampColor = isLead ? 0xfff8dc : 0xff2626;
     const lampMat = new THREE.MeshStandardMaterial({
       color: lampColor,
       emissive: lampColor,
-      emissiveIntensity: isLead ? 2.6 : 1.8,
+      emissiveIntensity: isLead ? 2.8 : 2.0,
     });
 
-    [-0.12, 0.12].forEach((lx) => {
-      const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.025, 12, 12), lampMat);
-      lamp.position.set(lx, -0.025, 0.145);
-      cabGroup.add(lamp);
-    });
-
-    if (isLead) {
-      const topLamp = new THREE.Mesh(new THREE.SphereGeometry(0.018, 10, 10), lampMat);
-      topLamp.position.set(0, 0.185, 0.065);
-      cabGroup.add(topLamp);
-
-      const destBoard = new THREE.Mesh(
-        new RoundedBoxGeometry(0.17, 0.028, 0.02, 2, 0.006),
-        new THREE.MeshStandardMaterial({ color: 0xf59e0b, emissive: 0xf59e0b, emissiveIntensity: 1.7 })
+    [-0.115, 0.115].forEach((lx) => {
+      const housing = new THREE.Mesh(
+        new RoundedBoxGeometry(0.062, 0.042, 0.028, 2, 0.008),
+        palette.steelDark
       );
-      destBoard.position.set(0, 0.155, 0.09);
-      cabGroup.add(destBoard);
-    }
+      housing.position.set(lx, -0.028, 0.142);
+      cabGroup.add(housing);
+
+      const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.017, 12, 12), lampMat);
+      lamp.position.set(lx, -0.028, 0.152);
+      cabGroup.add(lamp);
+
+      if (isLead) {
+        const ditchLamp = new THREE.Mesh(new THREE.SphereGeometry(0.012, 10, 10), lampMat);
+        ditchLamp.position.set(lx * 0.72, -0.072, 0.146);
+        cabGroup.add(ditchLamp);
+      }
+    });
+
+    // Illuminated amber destination board + top marker lamp
+    const topLamp = new THREE.Mesh(new THREE.SphereGeometry(0.015, 10, 10), lampMat);
+    topLamp.position.set(0, 0.18, 0.06);
+    cabGroup.add(topLamp);
+
+    const destTex = createSignTexture(destinationText, '#090d16', '#f59e0b');
+    const destBoard = new THREE.Mesh(
+      new RoundedBoxGeometry(0.18, 0.028, 0.02, 2, 0.006),
+      palette.registerEmissive(
+        new THREE.MeshStandardMaterial({
+          map: destTex,
+          emissiveMap: destTex,
+          emissive: 0xf59e0b,
+          emissiveIntensity: 1.5,
+        }),
+        1.5,
+        2.0
+      )
+    );
+    destBoard.position.set(0, 0.148, 0.088);
+    destBoard.rotation.x = 0.28;
+    cabGroup.add(destBoard);
 
     car.add(cabGroup);
   }
 
-  // Pantograph on AMP car
+  // Detailed Brecknell Willis Z-frame Pantograph on AMP car
   if (hasPantograph) {
     const panto = new THREE.Group();
-    panto.position.set(0, 0.425, 0.22);
+    panto.position.set(0, 0.41, 0.2);
 
     const insMat = new THREE.MeshStandardMaterial({ color: 0x991b1b, roughness: 0.4 });
-    [-0.08, 0.08].forEach((ix) => {
-      const ins = new THREE.Mesh(new THREE.CylinderGeometry(0.014, 0.016, 0.035, 10), insMat);
-      ins.position.set(ix, 0.015, 0);
+    [
+      [-0.075, -0.04],
+      [0.075, -0.04],
+      [-0.075, 0.04],
+      [0.075, 0.04],
+    ].forEach(([ix, iz]) => {
+      const ins = new THREE.Mesh(new THREE.CylinderGeometry(0.011, 0.013, 0.028, 10), insMat);
+      ins.position.set(ix, 0.014, iz);
       panto.add(ins);
     });
 
-    const arm1 = new THREE.Mesh(new THREE.CylinderGeometry(0.01, 0.01, 0.15, 8), palette.steel);
-    arm1.position.set(0, 0.06, -0.04);
-    arm1.rotation.x = 0.65;
+    const baseFrame = new THREE.Mesh(
+      new RoundedBoxGeometry(0.17, 0.014, 0.11, 2, 0.004),
+      palette.steelDark
+    );
+    baseFrame.position.set(0, 0.03, 0);
+    panto.add(baseFrame);
+
+    const arm1 = new THREE.Mesh(new THREE.CylinderGeometry(0.009, 0.011, 0.115, 8), palette.steel);
+    arm1.position.set(0, 0.055, -0.035);
+    arm1.rotation.x = 0.72;
     panto.add(arm1);
 
-    const arm2 = new THREE.Mesh(new THREE.CylinderGeometry(0.01, 0.01, 0.15, 8), palette.steel);
-    arm2.position.set(0, 0.13, -0.02);
-    arm2.rotation.x = -0.65;
+    const arm2 = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, 0.115, 8), palette.steel);
+    arm2.position.set(0, 0.105, -0.02);
+    arm2.rotation.x = -0.72;
     panto.add(arm2);
 
-    const collector = new THREE.Mesh(new RoundedBoxGeometry(0.24, 0.018, 0.03, 2, 0.006), palette.steel);
-    collector.position.set(0, 0.18, 0.02);
+    const collector = new THREE.Mesh(
+      new RoundedBoxGeometry(0.21, 0.014, 0.028, 2, 0.005),
+      palette.steel
+    );
+    collector.position.set(0, 0.138, 0.018);
     panto.add(collector);
     car.add(panto);
   }
 
   tagLandmark(
     car,
-    'AT Metro AM Class (AMA / AMT / AMP)',
-    'Auckland’s CAF-built 3-car stainless steel electric train with navy cab mask, high-visibility yellow nose & doors, running on 25 kV AC.'
+    `AT Metro ${carLabel}`,
+    'Auckland’s CAF-built 3-car stainless steel electric train with crimson-and-navy AM livery, flanged bogie wheels, and 25 kV AC pantograph.'
   );
 
   return car;
 }
 
-function createOffsetCurve(curve, offsetDist, offsetY = 0, samples = 240) {
-  const pts = [];
-  const up = new THREE.Vector3(0, 1, 0);
+function findClosestT(curve, target, samples = 800) {
+  let bestT = 0;
+  let bestDistSq = Infinity;
   for (let i = 0; i < samples; i++) {
     const t = i / samples;
-    const p = curve.getPointAt(t);
-    const tangent = curve.getTangentAt(t).normalize();
-    const right = new THREE.Vector3().crossVectors(tangent, up).normalize();
-    const pt = p.clone().addScaledVector(right, offsetDist);
-    pt.y += offsetY;
-    pts.push(pt);
+    const dSq = curve.getPointAt(t).distanceToSquared(target);
+    if (dSq < bestDistSq) {
+      bestDistSq = dSq;
+      bestT = t;
+    }
   }
-  return new THREE.CatmullRomCurve3(pts, true);
+  return bestT;
 }
 
-// Build a seamless, continuous swept ribbon BufferGeometry along a closed 3D curve!
-function createSweptTrackDeckGeometry(curve, halfWidth = 0.28, thickness = 0.11, steps = 260) {
-  const profile = [
-    [-halfWidth, 0],
-    [ halfWidth, 0],
-    [ halfWidth * 0.92, -thickness],
-    [-halfWidth * 0.92, -thickness],
-  ];
+function sampleWrappedPoint(curve, rawT) {
+  const t = ((rawT % 1) + 1) % 1;
+  return {
+    pt: curve.getPointAt(t),
+    tangent: curve.getTangentAt(t).normalize(),
+  };
+}
+
+function createOffsetCurve(
+  curve,
+  offsetDist,
+  offsetY = 0,
+  tStart = 0,
+  tEnd = 1,
+  closed = true,
+  samples = 220,
+  sagAmplitude = 0,
+  sagCycles = 1
+) {
+  const pts = [];
+  const up = new THREE.Vector3(0, 1, 0);
+  const count = closed ? samples : samples + 1;
+  for (let i = 0; i < count; i++) {
+    const u = i / samples;
+    const rawT = tStart + u * (tEnd - tStart);
+    const { pt, tangent } = sampleWrappedPoint(curve, rawT);
+    const right = new THREE.Vector3().crossVectors(tangent, up).normalize();
+    const out = pt.clone().addScaledVector(right, offsetDist);
+    const sag = sagAmplitude ? Math.abs(Math.sin(u * Math.PI * sagCycles)) * sagAmplitude : 0;
+    out.y += offsetY - sag;
+    pts.push(out);
+  }
+  return new THREE.CatmullRomCurve3(pts, closed);
+}
+
+// Sweeps a counter-clockwise 2D cross-section [pxAlongRight, pyAlongNormal] with true outward normals.
+function createSweptSegmentGeometry(
+  curve,
+  tStart,
+  tEnd,
+  closed,
+  profile,
+  yOffset = 0,
+  steps = 220,
+  flipWinding = false
+) {
   const pLen = profile.length;
   const positions = [];
   const indices = [];
   const up = new THREE.Vector3(0, 1, 0);
 
   for (let i = 0; i <= steps; i++) {
-    const t = (i % steps) / steps;
-    const center = curve.getPointAt(t);
-    const tangent = curve.getTangentAt(t).normalize();
+    const rawT = closed
+      ? (i % steps) / steps
+      : tStart + (i / steps) * (tEnd - tStart);
+    const { pt, tangent } = sampleWrappedPoint(curve, rawT);
     const right = new THREE.Vector3().crossVectors(tangent, up).normalize();
     const normal = new THREE.Vector3().crossVectors(right, tangent).normalize();
 
     for (let j = 0; j < pLen; j++) {
       const [px, py] = profile[j];
-      const v = center
+      const v = pt
         .clone()
         .addScaledVector(right, px)
-        .addScaledVector(normal, py - 0.015);
+        .addScaledVector(normal, py + yOffset);
       positions.push(v.x, v.y, v.z);
     }
   }
@@ -386,7 +675,11 @@ function createSweptTrackDeckGeometry(curve, halfWidth = 0.28, thickness = 0.11,
       const b = rowB + j;
       const c = rowB + jNext;
       const d = rowA + jNext;
-      indices.push(a, b, d, b, c, d);
+      if (flipWinding) {
+        indices.push(a, b, d, b, c, d);
+      } else {
+        indices.push(a, d, b, d, c, b);
+      }
     }
   }
 
@@ -397,11 +690,546 @@ function createSweptTrackDeckGeometry(curve, halfWidth = 0.28, thickness = 0.11,
   return geo;
 }
 
-function sampleTrackWithDwell(u) {
-  const dwellStart = 0.06;
-  const dwellEnd = 0.16;
-  const stationT = 0.09;
+function buildRailSignal(group, curve, tPos, sideOffset, aspectColor, palette) {
+  const { pt, tangent } = sampleWrappedPoint(curve, tPos);
+  const up = new THREE.Vector3(0, 1, 0);
+  const right = new THREE.Vector3().crossVectors(tangent, up).normalize();
+  const pos = pt.clone().addScaledVector(right, sideOffset);
 
+  const signal = new THREE.Group();
+  signal.position.set(pos.x, pt.y, pos.z);
+  const look = new THREE.Matrix4().lookAt(pos.clone().add(tangent), pos, up);
+  signal.quaternion.setFromRotationMatrix(look);
+
+  const mast = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.011, 0.014, 0.42, 8),
+    palette.steelDark
+  );
+  mast.position.y = 0.21;
+  signal.add(mast);
+
+  const head = new THREE.Mesh(
+    new RoundedBoxGeometry(0.055, 0.11, 0.04, 2, 0.01),
+    palette.steelDark
+  );
+  head.position.y = 0.42;
+  signal.add(head);
+
+  const lamp = new THREE.Mesh(
+    new THREE.SphereGeometry(0.015, 8, 8),
+    new THREE.MeshStandardMaterial({
+      color: aspectColor,
+      emissive: aspectColor,
+      emissiveIntensity: 2.2,
+    })
+  );
+  lamp.position.set(0, 0.44, 0.022);
+  signal.add(lamp);
+
+  group.add(signal);
+}
+
+function buildTrackInfrastructure(
+  group,
+  trackCurve,
+  palette,
+  {
+    tStart = 0,
+    tEnd = 1,
+    closed = true,
+    steps = 220,
+    sleeperCount = 135,
+    viaductSpan = null, // [vStart, vEnd]
+    pierSpacingStep = 10,
+    retainingWallSpan = null, // [wStart, wEnd]
+    withCatenary = true,
+    gantrySide = -0.34,
+    wireSpan = null,
+  } = {}
+) {
+  const ballastMat = new THREE.MeshStandardMaterial({
+    color: 0x575f6b,
+    roughness: 0.94,
+    metalness: 0.04,
+    polygonOffset: true,
+    polygonOffsetFactor: 1,
+    polygonOffsetUnits: 1,
+  });
+  const railMat = new THREE.MeshStandardMaterial({
+    color: 0xdbe3ec,
+    roughness: 0.26,
+    metalness: 0.85,
+  });
+
+  // 1. Sloped crushed-basalt ballast bed (clockwise in [right, normal] -> true outward normals)
+  const ballastProfile = [
+    [-0.19, 0.0],
+    [0.19, 0.0],
+    [0.275, -0.095],
+    [-0.275, -0.095],
+  ];
+  const ballastGeo = createSweptSegmentGeometry(
+    trackCurve,
+    tStart,
+    tEnd,
+    closed,
+    ballastProfile,
+    -0.012,
+    steps
+  );
+  const ballastMesh = new THREE.Mesh(ballastGeo, ballastMat);
+  ballastMesh.castShadow = true;
+  ballastMesh.receiveShadow = true;
+  group.add(ballastMesh);
+
+  // 2. Concrete box-girder viaduct & hammerhead T-piers strictly along elevated span
+  if (viaductSpan) {
+    const [vStart, vEnd] = viaductSpan;
+    const vSteps = Math.max(40, Math.round(steps * (vEnd - vStart)));
+    const deckProfile = [
+      [-0.31, -0.055],
+      [0.31, -0.055],
+      [0.24, -0.145],
+      [-0.24, -0.145],
+    ];
+    const deckGeo = createSweptSegmentGeometry(
+      trackCurve,
+      vStart,
+      vEnd,
+      false,
+      deckProfile,
+      0.0,
+      vSteps
+    );
+    const deckMesh = new THREE.Mesh(deckGeo, palette.concreteDark);
+    deckMesh.castShadow = true;
+    deckMesh.receiveShadow = true;
+    group.add(deckMesh);
+
+    // Slimmer safety edge kerbs + tubular handrails along elevated viaduct
+    [-0.3, 0.3].forEach((sideX) => {
+      const railBar = createOffsetCurve(trackCurve, sideX, 0.045, vStart, vEnd, false, vSteps);
+      group.add(new THREE.Mesh(new THREE.TubeGeometry(railBar, vSteps, 0.011, 6, false), palette.steel));
+    });
+  }
+
+  // Optional sculpted basalt retaining wall along Maungawhau coastal reserve
+  if (retainingWallSpan) {
+    const [wStart, wEnd] = retainingWallSpan;
+    const wSteps = 44;
+    const wallProfile = [
+      [-0.3, 0.07],
+      [-0.22, 0.07],
+      [-0.22, -0.09],
+      [-0.3, -0.09],
+    ];
+    const wallMesh = new THREE.Mesh(
+      createSweptSegmentGeometry(trackCurve, wStart, wEnd, false, wallProfile, 0.0, wSteps),
+      palette.basaltRock
+    );
+    wallMesh.castShadow = true;
+    wallMesh.receiveShadow = true;
+    group.add(wallMesh);
+  }
+
+  // 3. Twin Metallic Running Rails at gauge ±0.115
+  const railCurveLeft = createOffsetCurve(trackCurve, -0.115, 0.022, tStart, tEnd, closed, steps);
+  const railCurveRight = createOffsetCurve(trackCurve, 0.115, 0.022, tStart, tEnd, closed, steps);
+  group.add(
+    new THREE.Mesh(new THREE.TubeGeometry(railCurveLeft, steps, 0.014, 8, closed), railMat),
+    new THREE.Mesh(new THREE.TubeGeometry(railCurveRight, steps, 0.014, 8, closed), railMat)
+  );
+
+  // 4. Timber/Concrete Sleepers + Viaduct Hammerhead Piers
+  const sleeperMat = new THREE.MeshStandardMaterial({ color: 0x62584f, roughness: 0.88 });
+  const sleeperGeo = new RoundedBoxGeometry(0.32, 0.024, 0.064, 2, 0.006);
+  const pillarGeo = new THREE.CylinderGeometry(0.085, 0.115, 1, 8);
+  const plinthGeo = new THREE.CylinderGeometry(0.15, 0.17, 0.08, 12);
+  const crossheadGeo = new RoundedBoxGeometry(0.56, 0.09, 0.18, 2, 0.02);
+
+  const up = new THREE.Vector3(0, 1, 0);
+  const dummyQuat = new THREE.Quaternion();
+  const dummyMat = new THREE.Matrix4();
+
+  for (let i = 0; i <= sleeperCount; i++) {
+    if (closed && i === sleeperCount) break;
+    const rawT = tStart + (i / sleeperCount) * (tEnd - tStart);
+    const { pt, tangent } = sampleWrappedPoint(trackCurve, rawT);
+
+    dummyMat.lookAt(pt, pt.clone().add(tangent), up);
+    dummyQuat.setFromRotationMatrix(dummyMat);
+
+    const sleeper = new THREE.Mesh(sleeperGeo, sleeperMat);
+    sleeper.position.set(pt.x, pt.y + 0.002, pt.z);
+    sleeper.quaternion.copy(dummyQuat);
+    group.add(sleeper);
+
+    if (viaductSpan && rawT >= viaductSpan[0] + 0.02 && rawT <= viaductSpan[1] - 0.02 && pt.y > 0.42 && i % pierSpacingStep === 0) {
+      const deckBottomY = pt.y - 0.14;
+      const groundTopY = 0.12;
+      const h = Math.max(0.2, deckBottomY - groundTopY);
+
+      const pierGroup = new THREE.Group();
+      pierGroup.position.set(pt.x, 0, pt.z);
+      pierGroup.quaternion.copy(dummyQuat);
+
+      const col = new THREE.Mesh(pillarGeo, palette.concrete);
+      col.scale.set(1, h, 1);
+      col.position.y = groundTopY + h * 0.5;
+      col.castShadow = true;
+      col.receiveShadow = true;
+      pierGroup.add(col);
+
+      const plinth = new THREE.Mesh(plinthGeo, palette.concreteDark);
+      plinth.position.y = groundTopY + 0.04;
+      pierGroup.add(plinth);
+
+      const crosshead = new THREE.Mesh(crossheadGeo, palette.concrete);
+      crosshead.position.y = deckBottomY - 0.035;
+      crosshead.castShadow = true;
+      pierGroup.add(crosshead);
+
+      group.add(pierGroup);
+    }
+  }
+
+  // 5. Overhead 25 kV Catenary Masts & Dual Contact/Messenger Wires (strictly above ground!)
+  if (withCatenary) {
+    const [wStart, wEnd] = wireSpan || [tStart, tEnd];
+    const wClosed = wireSpan ? false : closed;
+    const mastCount = wClosed ? 12 : 8;
+
+    for (let m = 0; m <= mastCount; m++) {
+      if (wClosed && m === mastCount) break;
+      const u = m / mastCount;
+      if (!wClosed && (u < 0.03 || u > 0.97)) continue;
+      const rawT = wStart + u * (wEnd - wStart);
+      const { pt, tangent } = sampleWrappedPoint(trackCurve, rawT);
+
+      dummyMat.lookAt(pt, pt.clone().add(tangent), up);
+      dummyQuat.setFromRotationMatrix(dummyMat);
+
+      const gantry = new THREE.Group();
+      gantry.position.copy(pt);
+      gantry.quaternion.copy(dummyQuat);
+
+      const pole = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.014, 0.019, 0.68, 8),
+        palette.steelDark
+      );
+      pole.position.set(gantrySide, 0.31, 0);
+      gantry.add(pole);
+
+      const arm = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.008, 0.011, Math.abs(gantrySide) * 1.15, 6),
+        palette.steelDark
+      );
+      arm.rotation.z = Math.PI / 2;
+      arm.position.set(gantrySide * 0.45, 0.57, 0);
+      gantry.add(arm);
+
+      const stay = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.005, 0.005, Math.abs(gantrySide) * 1.1, 6),
+        palette.steel
+      );
+      stay.rotation.z = gantrySide > 0 ? 0.52 : -0.52;
+      stay.position.set(gantrySide * 0.52, 0.61, 0);
+      gantry.add(stay);
+
+      group.add(gantry);
+    }
+
+    const wSteps = Math.max(80, Math.round(steps * 0.75));
+    const contactWire = createOffsetCurve(trackCurve, 0, 0.548, wStart, wEnd, wClosed, wSteps);
+    const messengerWire = createOffsetCurve(
+      trackCurve,
+      0,
+      0.625,
+      wStart,
+      wEnd,
+      wClosed,
+      wSteps,
+      0.025,
+      mastCount
+    );
+    group.add(
+      new THREE.Mesh(new THREE.TubeGeometry(contactWire, wSteps, 0.006, 6, wClosed), palette.steel),
+      new THREE.Mesh(new THREE.TubeGeometry(messengerWire, wSteps, 0.0045, 6, wClosed), palette.steelDark)
+    );
+  }
+}
+
+// Builds a complete open-archway cut-and-cover CRL portal, dark interior tunnel bore,
+// approach retaining wing-walls, and landscaped green embankment hiding the dive underground.
+function buildCRLPortalTunnel(group, curve, tMouth, tDeep, isEntry, palette) {
+  const { pt: mouthPt, tangent: mouthTangent } = sampleWrappedPoint(curve, tMouth);
+  const up = new THREE.Vector3(0, 1, 0);
+  const outwardDir = mouthTangent.clone().multiplyScalar(isEntry ? -1 : 1).normalize();
+
+  // 1. Open Horseshoe Arch Portal Headwall & Wing Walls at tMouth
+  const portal = new THREE.Group();
+  portal.position.set(mouthPt.x, 0.0, mouthPt.z);
+  const mat = new THREE.Matrix4().lookAt(mouthPt.clone().add(outwardDir), mouthPt, up);
+  portal.quaternion.setFromRotationMatrix(mat);
+
+  // Side concrete portal piers framing the open doorway (x = ±0.35, clear of 0.36 train!)
+  [-0.35, 0.35].forEach((px) => {
+    const pier = new THREE.Mesh(
+      new RoundedBoxGeometry(0.14, 0.82, 0.24, 3, 0.02),
+      palette.concrete
+    );
+    pier.position.set(px, 0.52, 0);
+    pier.castShadow = true;
+    pier.receiveShadow = true;
+    portal.add(pier);
+  });
+
+  // Upper lintel beam strictly above the open arch crown (y = 0.85..1.04)
+  const lintel = new THREE.Mesh(
+    new RoundedBoxGeometry(0.86, 0.19, 0.26, 3, 0.025),
+    palette.concrete
+  );
+  lintel.position.set(0, 0.94, 0);
+  lintel.castShadow = true;
+  portal.add(lintel);
+
+  // Concrete horseshoe arch collar around open tunnel doorway (inner crown y = 0.54 + 0.315 = 0.855)
+  const archRing = new THREE.Mesh(
+    new THREE.TorusGeometry(0.38, 0.065, 14, 28, Math.PI),
+    palette.concreteDark
+  );
+  archRing.position.set(0, 0.54, 0.11);
+  portal.add(archRing);
+
+  // Illuminated CRL sign plaque + green tunnel entry signal
+  const signTex = createSignTexture('CRL • CITY RAIL', '#0f172a', '#2dd4bf');
+  const crlSign = new THREE.Mesh(
+    new RoundedBoxGeometry(0.54, 0.11, 0.03, 2, 0.008),
+    palette.registerEmissive(
+      new THREE.MeshStandardMaterial({
+        map: signTex,
+        emissiveMap: signTex,
+        emissive: 0xffffff,
+        emissiveIntensity: 0.4,
+      }),
+      0.4,
+      1.5
+    )
+  );
+  crlSign.position.set(0, 0.95, 0.13);
+  portal.add(crlSign);
+
+  const signalLamp = new THREE.Mesh(
+    new THREE.SphereGeometry(0.022, 10, 10),
+    new THREE.MeshStandardMaterial({
+      color: 0x10b981,
+      emissive: 0x10b981,
+      emissiveIntensity: 2.2,
+    })
+  );
+  signalLamp.position.set(-0.35, 0.72, 0.125);
+  portal.add(signalLamp);
+
+  group.add(portal);
+
+  // 2. Tapered Approach Retaining Wing-Walls outside tMouth
+  const approachDt = 0.045;
+  const aStart = isEntry ? tMouth - approachDt : tMouth;
+  const aEnd = isEntry ? tMouth : tMouth + approachDt;
+  const aSteps = 22;
+
+  const buildWingWallSweep = (sideSign) => {
+    const positions = [];
+    const indices = [];
+    for (let i = 0; i <= aSteps; i++) {
+      const s = i / aSteps;
+      // taperProgress = 0 at open tip, 1 at portal mouth
+      const taper = isEntry ? s : 1 - s;
+      const rawT = aStart + s * (aEnd - aStart);
+      const { pt, tangent } = sampleWrappedPoint(curve, rawT);
+      const right = new THREE.Vector3().crossVectors(tangent, up).normalize();
+      const topY = 0.28 + taper * 0.62;
+      const botY = 0.115;
+      const innerX = sideSign * 0.29;
+      const outerX = sideSign * (0.39 + taper * 0.05);
+
+      const ringPts =
+        sideSign > 0
+          ? [
+              [innerX, topY],
+              [outerX, topY],
+              [outerX, botY],
+              [innerX, botY],
+            ]
+          : [
+              [outerX, topY],
+              [innerX, topY],
+              [innerX, botY],
+              [outerX, botY],
+            ];
+      ringPts.forEach(([rx, ry]) => {
+        const v = pt.clone().addScaledVector(right, rx);
+        v.y = ry;
+        positions.push(v.x, v.y, v.z);
+      });
+    }
+    for (let i = 0; i < aSteps; i++) {
+      const rA = i * 4;
+      const rB = (i + 1) * 4;
+      for (let j = 0; j < 4; j++) {
+        const jN = (j + 1) % 4;
+        indices.push(rA + j, rA + jN, rB + j, rA + jN, rB + jN, rB + j);
+      }
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    geo.setIndex(indices);
+    geo.computeVertexNormals();
+    const mesh = new THREE.Mesh(geo, palette.concrete);
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    group.add(mesh);
+  };
+  buildWingWallSweep(-1);
+  buildWingWallSweep(1);
+
+  // 3. Dark Open Tunnel Bore Liner from tMouth -> tDeep + Exterior Landscaped Cut-and-Cover Berm
+  const tMin = Math.min(tMouth, tDeep);
+  const tMax = Math.max(tMouth, tDeep);
+  const boreSteps = 44;
+
+  // Inner pitch-black U-arch bore liner (follow track Y smoothly downward)
+  const boreProfile = [
+    [-0.31, -0.02],
+    [-0.31, 0.34],
+    [-0.21, 0.56],
+    [0.0, 0.62],
+    [0.21, 0.56],
+    [0.31, 0.34],
+    [0.31, -0.02],
+  ];
+  const boreMat = new THREE.MeshStandardMaterial({
+    color: 0x060a12,
+    roughness: 0.96,
+    side: THREE.DoubleSide,
+  });
+  const boreMesh = new THREE.Mesh(
+    createSweptSegmentGeometry(curve, tMin, tMax, false, boreProfile, 0, boreSteps, true),
+    boreMat
+  );
+  group.add(boreMesh);
+
+  // Warm recessed LED strip markers inside tunnel bore walls
+  const stripMat = new THREE.MeshStandardMaterial({
+    color: 0xfef08a,
+    emissive: 0xf59e0b,
+    emissiveIntensity: 1.6,
+  });
+  [0.2, 0.5].forEach((uInside) => {
+    const rawT = tMouth + uInside * (tDeep - tMouth);
+    const { pt, tangent } = sampleWrappedPoint(curve, rawT);
+    const right = new THREE.Vector3().crossVectors(tangent, up).normalize();
+    const q = new THREE.Quaternion().setFromRotationMatrix(
+      new THREE.Matrix4().lookAt(pt.clone().add(tangent), pt, up)
+    );
+    [-0.28, 0.28].forEach((lx) => {
+      const strip = new THREE.Mesh(new THREE.BoxGeometry(0.015, 0.03, 0.14), stripMat);
+      strip.position.copy(pt).addScaledVector(right, lx);
+      strip.position.y += 0.26;
+      strip.quaternion.copy(q);
+      group.add(strip);
+    });
+  });
+
+  // Solid dark deep bulkhead cap well below island deck at tDeep
+  const { pt: deepPt, tangent: deepTan } = sampleWrappedPoint(curve, tDeep);
+  const bulkhead = new THREE.Mesh(new THREE.BoxGeometry(0.68, 0.68, 0.08), boreMat);
+  bulkhead.position.set(deepPt.x, deepPt.y + 0.28, deepPt.z);
+  bulkhead.quaternion.setFromRotationMatrix(
+    new THREE.Matrix4().lookAt(deepPt.clone().add(deepTan), deepPt, up)
+  );
+  group.add(bulkhead);
+
+  // Exterior Concrete Tunnel Roof & Landscaped Green Mound covering the descent [tMouth..tDeep]
+  const bermPos = [];
+  const bermIdx = [];
+  const shellPos = [];
+  const shellIdx = [];
+
+  for (let i = 0; i <= boreSteps; i++) {
+    const s = i / boreSteps;
+    const rawT = tMin + s * (tMax - tMin);
+    // distFromMouth = 0 at tMouth, 1 at tDeep
+    const distFromMouth = isEntry ? s : 1 - s;
+    const { pt, tangent } = sampleWrappedPoint(curve, rawT);
+    const right = new THREE.Vector3().crossVectors(tangent, up).normalize();
+
+    const baseGroundY = 0.115;
+    const topHeight = 0.94 - Math.pow(distFromMouth, 0.85) * 0.72; // tapers cleanly to 0.22 at tDeep
+    const hw = 0.44 + Math.sin(distFromMouth * Math.PI) * 0.1;
+
+    // Landscaped curved green mound over tunnel concrete hood (px strictly increasing L->R!)
+    const bermRing = [
+      [-hw * 1.24, baseGroundY],
+      [-hw * 0.82, topHeight + 0.015],
+      [0, topHeight + 0.075],
+      [hw * 0.82, topHeight + 0.015],
+      [hw * 1.24, baseGroundY],
+    ];
+    bermRing.forEach(([rx, ry]) => {
+      const v = pt.clone().addScaledVector(right, rx);
+      v.y = ry;
+      bermPos.push(v.x, v.y, v.z);
+    });
+
+    // Concrete cut-and-cover roof slab edge (clockwise: [-X,bot]->[-X,top]->[+X,top]->[+X,bot])
+    const shellRing = [
+      [-hw * 0.9, baseGroundY],
+      [-hw * 0.9, topHeight - 0.03],
+      [hw * 0.9, topHeight - 0.03],
+      [hw * 0.9, baseGroundY],
+    ];
+    shellRing.forEach(([rx, ry]) => {
+      const v = pt.clone().addScaledVector(right, rx);
+      v.y = ry;
+      shellPos.push(v.x, v.y, v.z);
+    });
+  }
+
+  for (let i = 0; i < boreSteps; i++) {
+    const bA = i * 5;
+    const bB = (i + 1) * 5;
+    for (let j = 0; j < 4; j++) {
+      bermIdx.push(bA + j, bA + j + 1, bB + j, bA + j + 1, bB + j + 1, bB + j);
+    }
+    const sA = i * 4;
+    const sB = (i + 1) * 4;
+    for (let j = 0; j < 4; j++) {
+      const jN = (j + 1) % 4;
+      shellIdx.push(sA + j, sA + jN, sB + j, sA + jN, sB + jN, sB + j);
+    }
+  }
+
+  const bermGeo = new THREE.BufferGeometry();
+  bermGeo.setAttribute('position', new THREE.Float32BufferAttribute(bermPos, 3));
+  bermGeo.setIndex(bermIdx);
+  bermGeo.computeVertexNormals();
+  const bermMesh = new THREE.Mesh(bermGeo, palette.grass);
+  bermMesh.castShadow = true;
+  bermMesh.receiveShadow = true;
+  group.add(bermMesh);
+
+  const shellGeo = new THREE.BufferGeometry();
+  shellGeo.setAttribute('position', new THREE.Float32BufferAttribute(shellPos, 3));
+  shellGeo.setIndex(shellIdx);
+  shellGeo.computeVertexNormals();
+  const shellMesh = new THREE.Mesh(shellGeo, palette.concreteDark);
+  shellMesh.castShadow = true;
+  shellMesh.receiveShadow = true;
+  group.add(shellMesh);
+}
+
+function sampleTrackWithDwell(u, dwellStart, dwellEnd, stationT) {
   if (u < dwellStart) {
     return (u / dwellStart) * stationT;
   }
@@ -412,154 +1240,161 @@ function sampleTrackWithDwell(u) {
   return (stationT + rem * (1 - stationT)) % 1;
 }
 
+function buildTrainClip(name, cars, trackCurve, duration, dwell, { hideDeepUnderground = false } = {}) {
+  const keyCount = 240;
+  const times = [];
+  const trackLength = trackCurve.getLength();
+  const carSpacing = 1.13 / trackLength;
+  const bogieDt = 0.32 / trackLength;
+  const carOffsets = [
+    { obj: cars[0], offset: carSpacing },
+    { obj: cars[1], offset: 0.0 },
+    { obj: cars[2], offset: -carSpacing },
+  ];
+
+  const tracks = [];
+  const up = new THREE.Vector3(0, 1, 0);
+  const lookMatrix = new THREE.Matrix4();
+  const quat = new THREE.Quaternion();
+  const prevQuat = new THREE.Quaternion();
+
+  for (let s = 0; s <= keyCount; s++) {
+    times.push((s / keyCount) * duration);
+  }
+
+  carOffsets.forEach(({ obj, offset }) => {
+    const posValues = [];
+    const quatValues = [];
+    const scaleValues = [];
+
+    for (let s = 0; s <= keyCount; s++) {
+      const u = s / keyCount;
+      const baseT = sampleTrackWithDwell(u, dwell.start, dwell.end, dwell.stationT);
+      const centerT = (baseT + offset + 1) % 1;
+
+      const tFront = (centerT + bogieDt + 1) % 1;
+      const tRear = (centerT - bogieDt + 1) % 1;
+      const pFront = trackCurve.getPointAt(tFront);
+      const pRear = trackCurve.getPointAt(tRear);
+      const mid = new THREE.Vector3().addVectors(pFront, pRear).multiplyScalar(0.5);
+      const tangent = new THREE.Vector3().subVectors(pFront, pRear).normalize();
+
+      posValues.push(mid.x, mid.y + 0.036, mid.z);
+
+      lookMatrix.lookAt(mid.clone().add(tangent), mid, up);
+      quat.setFromRotationMatrix(lookMatrix);
+      if (s > 0 && prevQuat.dot(quat) < 0) {
+        quat.set(-quat.x, -quat.y, -quat.z, -quat.w);
+      }
+      prevQuat.copy(quat);
+      quatValues.push(quat.x, quat.y, quat.z, quat.w);
+
+      if (hideDeepUnderground) {
+        const sc = mid.y < -0.5 ? 0.0001 : mid.y < -0.36 ? THREE.MathUtils.smoothstep(mid.y, -0.5, -0.36) : 1.0;
+        const clamped = Math.max(0.0001, sc);
+        scaleValues.push(clamped, clamped, clamped);
+      }
+    }
+
+    tracks.push(new THREE.VectorKeyframeTrack(`${obj.name}.position`, times, posValues));
+    tracks.push(new THREE.QuaternionKeyframeTrack(`${obj.name}.quaternion`, times, quatValues));
+    if (hideDeepUnderground) {
+      tracks.push(new THREE.VectorKeyframeTrack(`${obj.name}.scale`, times, scaleValues));
+    }
+  });
+
+  return new THREE.AnimationClip(name, duration, tracks);
+}
+
 export function createBritomartAndTrain(palette) {
   const group = new THREE.Group();
 
+  // Track 1: Outer Coastal & Elevated Quay Viaduct Loop (Counter-Clockwise)
   const controlPoints = [
-    new THREE.Vector3(-2.6, 0.29, 4.78),
-    new THREE.Vector3(0.6, 0.29, 4.78),
-    new THREE.Vector3(2.52, 0.36, 4.32),
-    new THREE.Vector3(2.42, 0.85, 2.0),
-    new THREE.Vector3(2.22, 1.15, -1.2),
-    new THREE.Vector3(2.02, 1.15, -4.75),
-    new THREE.Vector3(-0.9, 1.15, -5.45),
-    new THREE.Vector3(-4.4, 1.05, -4.85),
-    new THREE.Vector3(-6.25, 0.62, -2.2),
-    new THREE.Vector3(-6.3, 0.3, 0.65),
-    new THREE.Vector3(-5.55, 0.29, 3.82),
+    new THREE.Vector3(-2.35, 0.24, 5.42), // 0: West approach to Britomart Platform 2
+    new THREE.Vector3(0.5, 0.24, 5.42),   // 1: Britomart Platform 2 (straight alongside central island platform)
+    new THREE.Vector3(2.35, 0.3, 4.95),   // 2: Southeast departure curve
+    new THREE.Vector3(2.72, 0.72, 2.75),  // 3: Ascending waterfront viaduct ramp
+    new THREE.Vector3(2.72, 1.12, 0.1),   // 4: Elevated Quay St Viaduct past Ferry Bldg
+    new THREE.Vector3(2.68, 1.12, -2.65), // 5: Elevated viaduct past Marina
+    new THREE.Vector3(2.05, 1.12, -4.85), // 6: Northeast harbour bend
+    new THREE.Vector3(-0.85, 1.12, -5.48),// 7: North viaduct overlooking Harbour Bridge
+    new THREE.Vector3(-4.25, 1.0, -4.92), // 8: Northwest curve past West CBD Tower
+    new THREE.Vector3(-6.28, 0.62, -2.45),// 9: Descending western viaduct ramp
+    new THREE.Vector3(-6.58, 0.26, 0.45), // 10: West coastal reserve (strictly clear of Maungawhau!)
+    new THREE.Vector3(-6.42, 0.24, 3.15), // 11: Southwest curve outside Maungawhau Park
+    new THREE.Vector3(-4.75, 0.24, 4.95), // 12: Southwest approach toward Britomart
   ];
+  const trackCurve = new THREE.CatmullRomCurve3(controlPoints, true, 'centripetal', 0.5);
 
-  const trackCurve = new THREE.CatmullRomCurve3(controlPoints, true, 'catmullrom', 0.5);
+  const t1Station = findClosestT(trackCurve, controlPoints[1]);
+  const t1ViaductStart = findClosestT(trackCurve, new THREE.Vector3(2.25, 0.29, 5.02));
+  const t1ViaductEnd = findClosestT(trackCurve, new THREE.Vector3(-6.48, 0.34, -0.45));
+  const t1WallStart = findClosestT(trackCurve, controlPoints[10]);
+  const t1WallEnd = findClosestT(trackCurve, controlPoints[11]);
 
-  // 1. Continuous Smooth Swept Viaduct Deck & Parapet Curbs (NO choppy boxes!)
-  const viaductGeo = createSweptTrackDeckGeometry(trackCurve, 0.28, 0.11, 260);
-  const viaductMesh = new THREE.Mesh(viaductGeo, palette.concreteDark);
-  viaductMesh.castShadow = true;
-  viaductMesh.receiveShadow = true;
-  group.add(viaductMesh);
-
-  // Smooth continuous side parapet curbs along the track
-  const leftParapetCurve = createOffsetCurve(trackCurve, -0.26, 0.015, 240);
-  const rightParapetCurve = createOffsetCurve(trackCurve, 0.26, 0.015, 240);
-  group.add(
-    new THREE.Mesh(new THREE.TubeGeometry(leftParapetCurve, 240, 0.028, 8, true), palette.concrete),
-    new THREE.Mesh(new THREE.TubeGeometry(rightParapetCurve, 240, 0.028, 8, true), palette.concrete)
-  );
-
-  // Smooth Steel Twin Rails
-  const leftRailCurve = createOffsetCurve(trackCurve, -0.11, 0.025, 240);
-  const rightRailCurve = createOffsetCurve(trackCurve, 0.11, 0.025, 240);
-  group.add(
-    new THREE.Mesh(new THREE.TubeGeometry(leftRailCurve, 240, 0.016, 8, true), palette.steel),
-    new THREE.Mesh(new THREE.TubeGeometry(rightRailCurve, 240, 0.016, 8, true), palette.steel)
-  );
-
-  // Sleepers, smooth cylindrical piers with flared capitals & catenary gantries
-  const sleeperMat = new THREE.MeshStandardMaterial({ color: 0x4b423b, roughness: 0.85 });
-  const sleeperGeo = new RoundedBoxGeometry(0.34, 0.026, 0.075, 2, 0.008);
-  const pillarGeo = new THREE.CylinderGeometry(0.1, 0.13, 1, 18);
-  const capitalGeo = new THREE.CylinderGeometry(0.22, 0.11, 0.12, 18);
-
-  const sleeperCount = 135;
-  const up = new THREE.Vector3(0, 1, 0);
-  const dummyQuat = new THREE.Quaternion();
-  const dummyMat = new THREE.Matrix4();
-
-  for (let i = 0; i < sleeperCount; i++) {
-    const t = i / sleeperCount;
-    const pt = trackCurve.getPointAt(t);
-    const tangent = trackCurve.getTangentAt(t).normalize();
-
-    dummyMat.lookAt(pt, pt.clone().add(tangent), up);
-    dummyQuat.setFromRotationMatrix(dummyMat);
-
-    const sleeper = new THREE.Mesh(sleeperGeo, sleeperMat);
-    sleeper.position.copy(pt);
-    sleeper.quaternion.copy(dummyQuat);
-    group.add(sleeper);
-
-    if (pt.y > 0.36 && i % 5 === 0) {
-      const h = pt.y - 0.08;
-      const pillar = new THREE.Mesh(pillarGeo, palette.concrete);
-      pillar.scale.set(1, h, 1);
-      pillar.position.set(pt.x, h / 2 + 0.05, pt.z);
-      pillar.castShadow = true;
-      pillar.receiveShadow = true;
-      group.add(pillar);
-
-      const capital = new THREE.Mesh(capitalGeo, palette.concrete);
-      capital.position.set(pt.x, pt.y - 0.12, pt.z);
-      group.add(capital);
-    }
-
-    if (i % 11 === 0) {
-      const gantry = new THREE.Group();
-      gantry.position.copy(pt);
-      gantry.quaternion.copy(dummyQuat);
-
-      const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.024, 0.72, 10), palette.steelDark);
-      pole.position.set(-0.33, 0.34, 0);
-      gantry.add(pole);
-
-      const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.015, 0.45, 8), palette.steelDark);
-      arm.rotation.z = Math.PI / 2;
-      arm.position.set(-0.12, 0.64, 0);
-      gantry.add(arm);
-
-      group.add(gantry);
-    }
-  }
-
-  // Overhead 25kV contact wire
-  const wireCurve = new THREE.CatmullRomCurve3(
-    Array.from({ length: 140 }, (_, i) => {
-      const p = trackCurve.getPointAt(i / 140);
-      return new THREE.Vector3(p.x, p.y + 0.6, p.z);
-    }),
-    true
-  );
-  group.add(
-    new THREE.Mesh(new THREE.TubeGeometry(wireCurve, 180, 0.008, 6, true), palette.steelDark)
-  );
-
-  // 2. Smooth Rounded Stone Tunnel Arch Portal beside Maungawhau
-  const tunnelGroup = new THREE.Group();
-  tunnelGroup.position.set(-6.3, 0.12, 0.65);
-  tunnelGroup.rotation.y = 0.08;
-
-  // Smooth rounded grassy hillock over tunnel
-  const hillockGeo = new THREE.SphereGeometry(0.82, 24, 18, 0, Math.PI * 2, 0, Math.PI * 0.55);
-  hillockGeo.scale(0.78, 1.08, 1.05);
-  const hillock = new THREE.Mesh(hillockGeo, palette.grass);
-  hillock.position.y = 0.1;
-  hillock.castShadow = true;
-  hillock.receiveShadow = true;
-  tunnelGroup.add(hillock);
-
-  // Smooth stone portal rings on both ends
-  [0.64, -0.64].forEach((mz) => {
-    const portalArch = new THREE.Mesh(
-      new THREE.TorusGeometry(0.36, 0.1, 14, 28, Math.PI),
-      palette.basaltRock
-    );
-    portalArch.position.set(0, 0.34, mz);
-    portalArch.castShadow = true;
-    tunnelGroup.add(portalArch);
-
-    [-0.36, 0.36].forEach((px) => {
-      const jamb = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.1, 0.11, 0.36, 12),
-        palette.basaltRock
-      );
-      jamb.position.set(px, 0.18, mz);
-      tunnelGroup.add(jamb);
-    });
+  buildTrackInfrastructure(group, trackCurve, palette, {
+    tStart: 0,
+    tEnd: 1,
+    closed: true,
+    steps: 260,
+    sleeperCount: 150,
+    viaductSpan: [t1ViaductStart, t1ViaductEnd],
+    pierSpacingStep: 10,
+    retainingWallSpan: [t1WallStart, t1WallEnd],
+    withCatenary: true,
+    gantrySide: -0.34,
   });
-  group.add(tunnelGroup);
 
-  // 3. Smooth Rounded Britomart / Waitematā Station
+  // Track 2: Inner CRL Underground & Surface Waterfront Loop (Clockwise — strictly nested inside Track 1)
+  const crlPoints = [
+    new THREE.Vector3(1.72, 0.24, 4.55),  // 0: Southeast curve into Britomart Platform 1
+    new THREE.Vector3(0.5, 0.24, 4.66),   // 1: Britomart Platform 1 (parallel to Track 1 at z=5.42!)
+    new THREE.Vector3(-1.3, 0.24, 4.66),  // 2: West departure from Britomart (level on surface)
+    new THREE.Vector3(-2.05, 0.24, 4.6),  // 3: West CRL Portal Mouth (y=0.24 above deck)
+    new THREE.Vector3(-2.4, 0.08, 4.5),   // 4: Dive inside West Portal concrete hood
+    new THREE.Vector3(-3.35, -0.78, 4.18),// 5: West CRL Portal Deep End (well below ground)
+    new THREE.Vector3(-3.35, -0.94, 1.65),// 6: Deep underground beside Maungawhau
+    new THREE.Vector3(-2.55, -0.94, -1.45),// 7: Deep underground beneath Sky Tower
+    new THREE.Vector3(-1.25, -0.9, -3.65),// 8: Deep underground curving northeast
+    new THREE.Vector3(0.15, -0.78, -4.32),// 9: North CRL Portal Deep End (well below ground)
+    new THREE.Vector3(1.12, 0.08, -4.12), // 10: Climb inside North Portal concrete hood
+    new THREE.Vector3(1.48, 0.24, -3.98), // 11: North CRL Portal Mouth (emerging at y=0.24)
+    new THREE.Vector3(2.04, 0.24, -2.55), // 12: Surface Waterfront Corridor east of Vero
+    new THREE.Vector3(2.04, 0.24, 0.15),  // 13: Surface Waterfront Corridor east of PwC
+    new THREE.Vector3(2.04, 0.24, 2.75),  // 14: Surface Waterfront Corridor inside Track 1 viaduct
+  ];
+  const trackCurve2 = new THREE.CatmullRomCurve3(crlPoints, true, 'centripetal', 0.5);
+
+  const t2Station = findClosestT(trackCurve2, crlPoints[1]);
+  const t2WestMouth = findClosestT(trackCurve2, crlPoints[3]);
+  const t2WestDeep = findClosestT(trackCurve2, crlPoints[5]);
+  const t2NorthDeep = findClosestT(trackCurve2, crlPoints[9]);
+  const t2NorthMouth = findClosestT(trackCurve2, crlPoints[11]);
+
+  // Surface rails & ballast extend 0.025 inside both open mouths; overhead wires stop right at the portal headwalls
+  buildTrackInfrastructure(group, trackCurve2, palette, {
+    tStart: t2NorthMouth - 0.025,
+    tEnd: 1 + t2WestMouth + 0.025,
+    closed: false,
+    steps: 170,
+    sleeperCount: 84,
+    withCatenary: true,
+    gantrySide: 0.34,
+    wireSpan: [t2NorthMouth, 1 + t2WestMouth],
+  });
+
+  // Cut-and-cover open archway CRL portals & landscaped berms
+  buildCRLPortalTunnel(group, trackCurve2, t2WestMouth, t2WestDeep, true, palette);
+  buildCRLPortalTunnel(group, trackCurve2, t2NorthMouth, t2NorthDeep, false, palette);
+
+  // Trackside green/amber departure signals
+  buildRailSignal(group, trackCurve, t1Station + 0.05, -0.34, 0x10b981, palette);
+  buildRailSignal(group, trackCurve2, t2WestMouth - 0.035, 0.34, 0xf59e0b, palette);
+
+  // 3. Britomart / Waitematā Twin-Platform Station & Central Glass Canopy
   const station = new THREE.Group();
-  station.position.set(0.6, 0.14, 3.88);
+  station.position.set(0.5, 0.12, 3.74);
 
   const cpoBody = new THREE.Mesh(
     new RoundedBoxGeometry(2.4, 0.92, 0.86, 4, 0.045),
@@ -591,7 +1426,6 @@ export function createBritomartAndTrain(palette) {
   cpoRoof.position.y = 1.07;
   station.add(cpoRoof);
 
-  // Smooth cylindrical sandstone columns/pilasters framing windows
   for (let px = -1.14; px <= 1.14; px += 0.38) {
     const pilaster = new THREE.Mesh(
       new THREE.CylinderGeometry(0.045, 0.048, 0.84, 14),
@@ -608,7 +1442,6 @@ export function createBritomartAndTrain(palette) {
   pediment.position.y = 1.15;
   station.add(pediment);
 
-  // Smooth copper dome cupola + finial
   const cupola = new THREE.Mesh(
     new THREE.SphereGeometry(0.26, 24, 18, 0, Math.PI * 2, 0, Math.PI / 2),
     new THREE.MeshStandardMaterial({ color: 0x3b7a75, roughness: 0.38, metalness: 0.35 })
@@ -620,7 +1453,6 @@ export function createBritomartAndTrain(palette) {
   finial.position.y = 1.64;
   station.add(finial);
 
-  // Arched warm station windows (rounded top arch!)
   for (let wx = -0.95; wx <= 0.95; wx += 0.38) {
     const win = new THREE.Mesh(
       new RoundedBoxGeometry(0.18, 0.34, 0.9, 3, 0.03),
@@ -656,154 +1488,178 @@ export function createBritomartAndTrain(palette) {
   stationSign.position.set(0, 0.86, 0.47);
   station.add(stationSign);
 
-  // Smooth high-segment glass-and-steel platform canopy
+  // Glass-and-steel vaulted train shed spanning BOTH Track 2 (local z=0.92), Central Island Platform (local z=1.30), & Track 1 (local z=1.68)
   const canopyMat = new THREE.MeshPhysicalMaterial({
     color: 0x93c5fd,
     transparent: true,
-    opacity: 0.48,
+    opacity: 0.46,
     roughness: 0.12,
     metalness: 0.15,
     clearcoat: 0.8,
   });
   const canopy = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.62, 0.62, 2.75, 32, 1, true, 0, Math.PI),
+    new THREE.CylinderGeometry(0.94, 0.94, 2.75, 32, 1, true, 0, Math.PI),
     canopyMat
   );
   canopy.rotation.z = Math.PI / 2;
   canopy.rotation.x = -Math.PI / 2;
-  canopy.position.set(0, 0.72, 0.88);
+  canopy.position.set(0, 0.72, 1.3);
   station.add(canopy);
 
   [-1.25, -0.62, 0, 0.62, 1.25].forEach((ax) => {
-    const arch = new THREE.Mesh(new THREE.TorusGeometry(0.62, 0.024, 12, 32, Math.PI), palette.steel);
+    const arch = new THREE.Mesh(new THREE.TorusGeometry(0.94, 0.024, 12, 32, Math.PI), palette.steel);
     arch.rotation.y = Math.PI / 2;
-    arch.position.set(ax, 0.72, 0.88);
+    arch.position.set(ax, 0.72, 1.3);
     station.add(arch);
   });
 
-  const platform = new THREE.Mesh(
-    new RoundedBoxGeometry(2.7, 0.14, 0.45, 3, 0.025),
+  // North side CPO concourse platform + Central island platform between Track 1 & Track 2
+  const yellowTactileMat = new THREE.MeshStandardMaterial({ color: 0xfacc15, roughness: 0.65 });
+
+  const northPlatform = new THREE.Mesh(
+    new RoundedBoxGeometry(2.6, 0.14, 0.24, 3, 0.02),
     palette.concrete
   );
-  platform.position.set(0, 0.07, 0.58);
-  platform.receiveShadow = true;
-  station.add(platform);
+  northPlatform.position.set(0, 0.08, 0.56);
+  northPlatform.receiveShadow = true;
+  station.add(northPlatform);
+
+  const islandPlatform = new THREE.Mesh(
+    new RoundedBoxGeometry(2.7, 0.14, 0.3, 3, 0.02),
+    palette.concrete
+  );
+  islandPlatform.position.set(0, 0.08, 1.3);
+  islandPlatform.receiveShadow = true;
+  station.add(islandPlatform);
+
+  [-0.13, 0.13].forEach((tz) => {
+    const tactile = new THREE.Mesh(new THREE.BoxGeometry(2.64, 0.008, 0.022), yellowTactileMat);
+    tactile.position.set(0, 0.152, 1.3 + tz);
+    station.add(tactile);
+  });
 
   [-0.75, 0.75].forEach((bx) => {
     const bench = new THREE.Mesh(
       new RoundedBoxGeometry(0.26, 0.04, 0.1, 2, 0.01),
       palette.woodBoardwalk
     );
-    bench.position.set(bx, 0.17, 0.56);
+    bench.position.set(bx, 0.17, 1.3);
     station.add(bench);
   });
 
   [
-    [-0.45, 0x3b82f6],
-    [-0.32, 0xf59e0b],
-    [0.42, 0xef4444],
-  ].forEach(([px, col]) => {
+    [-0.45, 0x3b82f6, 1.32],
+    [-0.25, 0xf59e0b, 1.26],
+    [0.42, 0xef4444, 1.34],
+    [0.12, 0x10b981, 0.58],
+  ].forEach(([px, col, pz]) => {
     const body = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.024, 0.028, 0.14, 12),
+      new THREE.CylinderGeometry(0.022, 0.026, 0.14, 12),
       new THREE.MeshStandardMaterial({ color: col })
     );
-    body.position.set(px, 0.21, 0.62);
+    body.position.set(px, 0.22, pz);
     const head = new THREE.Mesh(
-      new THREE.SphereGeometry(0.022, 12, 12),
+      new THREE.SphereGeometry(0.02, 12, 12),
       new THREE.MeshStandardMaterial({ color: 0xf1c27d })
     );
-    head.position.set(px, 0.3, 0.62);
+    head.position.set(px, 0.31, pz);
     station.add(body, head);
   });
 
   tagLandmark(
     station,
     'Britomart (Waitematā Station)',
-    'Auckland’s central rail hub uniting the 1912 Edwardian Chief Post Office with a sleek glass-and-steel train canopy.'
+    'Auckland’s central rail hub uniting the 1912 Edwardian Chief Post Office with twin through-tracks and a glass-and-steel vaulted canopy.'
   );
   group.add(station);
 
-  // 4. Build the 3-Car AT Metro AM Class Consist (AMA + AMT + AMP)
-  const leadCar = buildTrainCar({ isLead: true, palette });
-  const midCar = buildTrainCar({ palette });
-  const tailCar = buildTrainCar({ isTail: true, hasPantograph: true, palette });
-
+  // 4. Build Two High-Detail 3-Car AT Metro AM Class Consists (AMA + AMT + AMP)
+  const leadCar = buildTrainCar({
+    isLead: true,
+    carLabel: 'AMA 103',
+    destinationText: 'BRITOMART',
+    palette,
+  });
+  const midCar = buildTrainCar({ carLabel: 'AMT 103', palette });
+  const tailCar = buildTrainCar({
+    isTail: true,
+    hasPantograph: true,
+    carLabel: 'AMP 103',
+    destinationText: 'ONEHUNGA',
+    palette,
+  });
   leadCar.name = 'TrainLeadCar';
   midCar.name = 'TrainMidCar';
   tailCar.name = 'TrainTailCar';
 
-  group.add(leadCar, midCar, tailCar);
+  const leadCar2 = buildTrainCar({
+    isLead: true,
+    carLabel: 'AMA 218',
+    destinationText: 'CRL CITY',
+    palette,
+  });
+  const midCar2 = buildTrainCar({ carLabel: 'AMT 218', palette });
+  const tailCar2 = buildTrainCar({
+    isTail: true,
+    hasPantograph: true,
+    carLabel: 'AMP 218',
+    destinationText: 'MAUNGAWHAU',
+    palette,
+  });
+  leadCar2.name = 'Train2LeadCar';
+  midCar2.name = 'Train2MidCar';
+  tailCar2.name = 'Train2TailCar';
+
+  group.add(leadCar, midCar, tailCar, leadCar2, midCar2, tailCar2);
 
   const totalDuration = 28;
-  const keyCount = 180;
-  const times = [];
-  const trackLength = trackCurve.getLength();
-  const carSpacing = 1.13 / trackLength;
-  const carOffsets = [
-    { obj: leadCar, offset: carSpacing },
-    { obj: midCar, offset: 0.0 },
-    { obj: tailCar, offset: -carSpacing },
-  ];
+  const crlDuration = 24;
 
-  const tracks = [];
-  const lookMatrix = new THREE.Matrix4();
-  const quat = new THREE.Quaternion();
-  const prevQuat = new THREE.Quaternion();
+  const trainClip1 = buildTrainClip(
+    'ATMetroLoop',
+    [leadCar, midCar, tailCar],
+    trackCurve,
+    totalDuration,
+    { start: t1Station, end: t1Station + 0.08, stationT: t1Station }
+  );
 
-  for (let s = 0; s <= keyCount; s++) {
-    const u = s / keyCount;
-    times.push(u * totalDuration);
-  }
+  const trainClip2 = buildTrainClip(
+    'ATMetroCRLLoop',
+    [leadCar2, midCar2, tailCar2],
+    trackCurve2,
+    crlDuration,
+    { start: t2Station, end: t2Station + 0.08, stationT: t2Station },
+    { hideDeepUnderground: true }
+  );
 
-  carOffsets.forEach(({ obj, offset }) => {
-    const posValues = [];
-    const quatValues = [];
-
-    for (let s = 0; s <= keyCount; s++) {
-      const u = s / keyCount;
-      const baseT = sampleTrackWithDwell(u);
-      const t = (baseT + offset + 1) % 1;
-
-      const p = trackCurve.getPointAt(t);
-      const tangent = trackCurve.getTangentAt(t).normalize();
-      posValues.push(p.x, p.y + 0.04, p.z);
-
-      lookMatrix.lookAt(p.clone().add(tangent), p, up);
-      quat.setFromRotationMatrix(lookMatrix);
-      if (s > 0 && prevQuat.dot(quat) < 0) {
-        quat.set(-quat.x, -quat.y, -quat.z, -quat.w);
-      }
-      prevQuat.copy(quat);
-      quatValues.push(quat.x, quat.y, quat.z, quat.w);
-    }
-
-    tracks.push(new THREE.VectorKeyframeTrack(`${obj.name}.position`, times, posValues));
-    tracks.push(new THREE.QuaternionKeyframeTrack(`${obj.name}.quaternion`, times, quatValues));
-  });
-
-  const trainClip = new THREE.AnimationClip('ATMetroLoop', totalDuration, tracks);
   const mixer = new THREE.AnimationMixer(group);
-  const action = mixer.clipAction(trainClip);
-  action.play();
+  const action1 = mixer.clipAction(trainClip1);
+  const action2 = mixer.clipAction(trainClip2);
+  action1.play();
+  action2.play();
+  action2.time = 11;
 
   return {
     group,
     mixer,
-    action,
+    action: action1,
+    action2,
     leadCar,
     midCar,
+    leadCar2,
+    midCar2,
     getTrainStatus() {
-      const u = (action.time % totalDuration) / totalDuration;
-      if (u >= 0.06 && u <= 0.16) {
-        return 'Stopped at Britomart';
+      const u = (action1.time % totalDuration) / totalDuration;
+      if (u >= t1Station && u <= t1Station + 0.08) {
+        return 'Stopped at Britomart (Opposite CRL Train Active)';
       }
-      if (u > 0.72 && u < 0.88) {
-        return 'Passing Maungawhau';
+      if (u > 0.74 && u < 0.9) {
+        return 'Passing Maungawhau Coast (CRL Running)';
       }
-      if (u > 0.2 && u < 0.55) {
-        return 'Quay St Viaduct';
+      if (u > 0.18 && u < 0.52) {
+        return 'Quay St Viaduct (Opposite CRL Train Active)';
       }
-      return 'In Transit';
+      return '2 Trains Operating (Surface & CRL Underground)';
     },
   };
 }
