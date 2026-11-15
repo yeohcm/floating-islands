@@ -15,20 +15,20 @@ function createSmoothClosedShape(pts2D, samples = 120) {
 function createMainlandShape(inset = 0) {
   // World (x, z) -> Shape (x, -z) for rotateX(-PI/2)
   const raw = [
-    [-5.8 + inset, -( -5.65 + inset)],
-    [-2.2,         -( -6.22 + inset)],
-    [ 1.6,         -( -6.05 + inset)],
-    [ 3.05 - inset,-( -4.85 + inset)],
-    [ 3.12 - inset,-( -2.10)],
-    [ 2.92 - inset,-(  0.45)],
-    [ 3.16 - inset,-(  2.95)],
-    [ 2.95 - inset,-(  5.15 - inset)],
-    [ 1.25,        -(  5.98 - inset)],
-    [-2.5,         -(  6.08 - inset)],
-    [-5.95 + inset,-(  5.35 - inset)],
-    [-7.18 + inset,-(  2.85)],
-    [-7.35 + inset,-( -0.35)],
-    [-7.05 + inset,-( -3.65)],
+    [-5.8 + inset, -(-7.35 + inset)],
+    [-2.2,         -(-8.05 + inset)],
+    [ 1.6,         -(-7.85 + inset)],
+    [ 3.05 - inset,-(-6.15 + inset)],
+    [ 3.12 - inset,-(-2.85)],
+    [ 2.92 - inset,-( 0.45)],
+    [ 3.16 - inset,-( 2.95)],
+    [ 2.95 - inset,-( 5.15 - inset)],
+    [ 1.25,        -( 5.98 - inset)],
+    [-2.5,         -( 6.08 - inset)],
+    [-5.95 + inset,-( 5.35 - inset)],
+    [-7.18 + inset,-( 2.85)],
+    [-7.35 + inset,-(-0.65)],
+    [-7.05 + inset,-(-4.85)],
   ];
   const pts = raw.map(([x, y]) => new THREE.Vector2(x, y));
   pts.push(pts[0].clone());
@@ -113,7 +113,7 @@ export function createBaseIsland(palette) {
     const profile = Math.pow(t, 0.58);
     // Elliptical organic contour matching the combined island + harbour footprint
     const baseRx = 7.45 + Math.cos(angle * 2) * 0.35 + Math.sin(angle * 3) * 0.22;
-    const baseRz = 6.05 + Math.sin(angle * 2) * 0.28 - Math.cos(angle * 3) * 0.18;
+    const baseRz = 6.75 + Math.sin(angle * 2) * 0.28 - Math.cos(angle * 3) * 0.18;
     // Soft horizontal geological strata ripples
     const strata = 1 + Math.sin(t * Math.PI * 6) * 0.032 * (1 - t * 0.5);
     const lobe = 1 + Math.sin(angle * 5 + t * 2.2) * 0.055 * (1 - t * 0.3);
@@ -122,7 +122,7 @@ export function createBaseIsland(palette) {
     const rz = (0.25 + (baseRz - 0.25) * profile) * strata * lobe;
 
     bowlPos.setX(i, Math.cos(angle) * rx + 0.25 * profile);
-    bowlPos.setZ(i, Math.sin(angle) * rz - 0.05);
+    bowlPos.setZ(i, Math.sin(angle) * rz - 0.85 * profile);
     // Gently cup the bottom tip
     if (t < 0.08) {
       bowlPos.setY(i, vy + (0.08 - t) * 1.4);
@@ -360,12 +360,23 @@ export function createBaseIsland(palette) {
 
   group.add(northShore);
 
-  // 6. Roads: Queen Street & Customs Street
-  const queenSt = new THREE.Mesh(new THREE.PlaneGeometry(0.96, 9.0), palette.road);
+  // 6. Roads: Lengthened Queen Street Boulevard, Raised Sidewalks & Customs Street
+  const queenSt = new THREE.Mesh(new THREE.PlaneGeometry(0.96, 10.6), palette.queenRoad || palette.road);
   queenSt.rotation.x = -Math.PI / 2;
-  queenSt.position.set(-0.45, 0.145, -0.55);
+  queenSt.position.set(-0.45, 0.146, -1.95);
   queenSt.receiveShadow = true;
   group.add(queenSt);
+
+  // Raised paved West & East pedestrian promenades along Queen Street
+  [-1.16, 0.26].forEach((sx) => {
+    const walk = new THREE.Mesh(
+      new RoundedBoxGeometry(0.46, 0.032, 9.8, 2, 0.008),
+      palette.sidewalk
+    );
+    walk.position.set(sx, 0.132, -1.75);
+    walk.receiveShadow = true;
+    group.add(walk);
+  });
 
   const customsRoad = new THREE.Mesh(new THREE.PlaneGeometry(0.86, 5.3), palette.road);
   customsRoad.rotation.x = -Math.PI / 2;
@@ -375,12 +386,14 @@ export function createBaseIsland(palette) {
   group.add(customsRoad);
 
   const stripeMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.7 });
-  for (let i = -2; i <= 2; i++) {
-    const stripe = new THREE.Mesh(new THREE.PlaneGeometry(0.11, 0.42), stripeMat);
-    stripe.rotation.x = -Math.PI / 2;
-    stripe.position.set(-0.45 + i * 0.18, 0.155, 2.52);
-    group.add(stripe);
-  }
+  [2.52, -0.85, -4.25].forEach((cz) => {
+    for (let i = -2; i <= 2; i++) {
+      const stripe = new THREE.Mesh(new THREE.PlaneGeometry(0.11, 0.42), stripeMat);
+      stripe.rotation.x = -Math.PI / 2;
+      stripe.position.set(-0.45 + i * 0.18, 0.155, cz);
+      group.add(stripe);
+    }
+  });
 
   // 7. Smooth Sculpted Rolling Maungawhau / Mt Eden Volcanic Cone
   const mtEden = new THREE.Group();
@@ -492,8 +505,8 @@ export function createBaseIsland(palette) {
   group.add(mtEden);
 
   // Smooth rounded Aotea Park lawn
-  const aoteaLawn = new THREE.Mesh(new THREE.CylinderGeometry(1.32, 1.38, 0.08, 36), palette.grassBright);
-  aoteaLawn.position.set(-3.7, 0.15, -1.65);
+  const aoteaLawn = new THREE.Mesh(new THREE.CylinderGeometry(1.12, 1.18, 0.08, 36), palette.grassBright);
+  aoteaLawn.position.set(-4.55, 0.15, -1.35);
   aoteaLawn.receiveShadow = true;
   group.add(aoteaLawn);
 

@@ -117,7 +117,7 @@ islandRoot.add(
 // 6. Camera Presets & Smooth Transitions
 const CAMERA_PRESETS = {
   overview: { pos: new THREE.Vector3(17.5, 11.2, 18.5), target: new THREE.Vector3(0, 2.25, 0) },
-  skytower: { pos: new THREE.Vector3(6.5, 8.2, 7.5), target: new THREE.Vector3(-1.95, 4.8, -1.75) },
+  skytower: { pos: new THREE.Vector3(6.2, 8.2, 7.2), target: new THREE.Vector3(-3.15, 4.8, -2.15) },
   train: { pos: new THREE.Vector3(4.2, 4.2, 10.6), target: new THREE.Vector3(0.5, 0.8, 4.6) },
   harbour: { pos: new THREE.Vector3(12.2, 4.6, 3.6), target: new THREE.Vector3(5.0, 0.6, -0.8) },
   mteden: { pos: new THREE.Vector3(-9.2, 4.8, 8.6), target: new THREE.Vector3(-4.2, 1.0, 2.0) },

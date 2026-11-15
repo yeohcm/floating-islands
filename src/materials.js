@@ -121,7 +121,7 @@ export function createPavingTexture() {
   }, 6, 7);
 }
 
-export function createRoadTexture() {
+export function createRoadTexture(repeatY = 1) {
   return createCanvasTexture(256, 256, (ctx, w, h) => {
     ctx.fillStyle = '#333b44';
     ctx.fillRect(0, 0, w, h);
@@ -143,7 +143,7 @@ export function createRoadTexture() {
     ctx.fillStyle = '#cbd5e1';
     ctx.fillRect(6, 0, 5, h);
     ctx.fillRect(w - 11, 0, 5, h);
-  });
+  }, 1, repeatY);
 }
 
 export function createSignTexture(text, bg = '#0f172a', fg = '#38bdf8') {
@@ -303,8 +303,19 @@ export function createPalette() {
   });
 
   const road = new THREE.MeshStandardMaterial({
-    map: createRoadTexture(),
+    map: createRoadTexture(2),
     roughness: 0.85,
+    polygonOffset: true,
+    polygonOffsetFactor: -1,
+    polygonOffsetUnits: -1,
+  });
+
+  const queenRoad = new THREE.MeshStandardMaterial({
+    map: createRoadTexture(4),
+    roughness: 0.85,
+    polygonOffset: true,
+    polygonOffsetFactor: -1,
+    polygonOffsetUnits: -1,
   });
 
   const sidewalk = new THREE.MeshStandardMaterial({
@@ -345,6 +356,7 @@ export function createPalette() {
     slateRoof,
     woodBoardwalk,
     road,
+    queenRoad,
     sidewalk,
     water,
     nightEmissives,

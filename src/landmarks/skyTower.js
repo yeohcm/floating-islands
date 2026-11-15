@@ -4,7 +4,7 @@ import { tagLandmark } from '../materials.js';
 
 export function createSkyTower(palette) {
   const group = new THREE.Group();
-  group.position.set(-1.95, 0.12, -1.75);
+  group.position.set(-3.15, 0.12, -2.15);
 
   // Smooth rounded SkyCity plaza podium & circular glass atrium rotunda
   const podium1 = new THREE.Mesh(

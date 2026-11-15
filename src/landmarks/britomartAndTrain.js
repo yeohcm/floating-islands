@@ -1315,12 +1315,12 @@ export function createBritomartAndTrain(palette) {
     new THREE.Vector3(0.5, 0.24, 5.42),   // 1: Britomart Platform 2 (straight alongside central island platform)
     new THREE.Vector3(2.35, 0.3, 4.95),   // 2: Southeast departure curve
     new THREE.Vector3(2.72, 0.72, 2.75),  // 3: Ascending waterfront viaduct ramp
-    new THREE.Vector3(2.72, 1.12, 0.1),   // 4: Elevated Quay St Viaduct past Ferry Bldg
-    new THREE.Vector3(2.68, 1.12, -2.65), // 5: Elevated viaduct past Marina
-    new THREE.Vector3(2.05, 1.12, -4.85), // 6: Northeast harbour bend
-    new THREE.Vector3(-0.85, 1.12, -5.48),// 7: North viaduct overlooking Harbour Bridge
-    new THREE.Vector3(-4.25, 1.0, -4.92), // 8: Northwest curve past West CBD Tower
-    new THREE.Vector3(-6.28, 0.62, -2.45),// 9: Descending western viaduct ramp
+    new THREE.Vector3(2.72, 1.12, -0.1),  // 4: Elevated Quay St Viaduct past Ferry Bldg
+    new THREE.Vector3(2.68, 1.12, -3.45), // 5: Elevated viaduct past Marina
+    new THREE.Vector3(2.05, 1.12, -6.35), // 6: Northeast harbour bend
+    new THREE.Vector3(-0.85, 1.12, -7.25),// 7: North viaduct overlooking Upper Queen St & Harbour Bridge
+    new THREE.Vector3(-4.35, 1.0, -6.55), // 8: Northwest curve past West CBD Tower
+    new THREE.Vector3(-6.35, 0.62, -3.55),// 9: Descending western viaduct ramp
     new THREE.Vector3(-6.58, 0.26, 0.45), // 10: West coastal reserve (strictly clear of Maungawhau!)
     new THREE.Vector3(-6.42, 0.24, 3.15), // 11: Southwest curve outside Maungawhau Park
     new THREE.Vector3(-4.75, 0.24, 4.95), // 12: Southwest approach toward Britomart
@@ -1354,14 +1354,14 @@ export function createBritomartAndTrain(palette) {
     new THREE.Vector3(-2.05, 0.24, 4.6),  // 3: West CRL Portal Mouth (y=0.24 above deck)
     new THREE.Vector3(-2.4, 0.08, 4.5),   // 4: Dive inside West Portal concrete hood
     new THREE.Vector3(-3.35, -0.78, 4.18),// 5: West CRL Portal Deep End (well below ground)
-    new THREE.Vector3(-3.35, -0.94, 1.65),// 6: Deep underground beside Maungawhau
-    new THREE.Vector3(-2.55, -0.94, -1.45),// 7: Deep underground beneath Sky Tower
-    new THREE.Vector3(-1.25, -0.9, -3.65),// 8: Deep underground curving northeast
-    new THREE.Vector3(0.15, -0.78, -4.32),// 9: North CRL Portal Deep End (well below ground)
-    new THREE.Vector3(1.12, 0.08, -4.12), // 10: Climb inside North Portal concrete hood
-    new THREE.Vector3(1.48, 0.24, -3.98), // 11: North CRL Portal Mouth (emerging at y=0.24)
-    new THREE.Vector3(2.04, 0.24, -2.55), // 12: Surface Waterfront Corridor east of Vero
-    new THREE.Vector3(2.04, 0.24, 0.15),  // 13: Surface Waterfront Corridor east of PwC
+    new THREE.Vector3(-3.45, -0.94, 1.45),// 6: Deep underground beside Maungawhau
+    new THREE.Vector3(-2.85, -0.94, -2.15),// 7: Deep underground beneath Sky Tower
+    new THREE.Vector3(-1.35, -0.9, -4.95),// 8: Deep underground curving northeast
+    new THREE.Vector3(0.25, -0.78, -5.85),// 9: North CRL Portal Deep End
+    new THREE.Vector3(1.18, 0.08, -5.62), // 10: Climb inside North Portal concrete hood
+    new THREE.Vector3(1.52, 0.24, -5.45), // 11: North CRL Portal Mouth
+    new THREE.Vector3(2.04, 0.24, -3.55), // 12: Surface Waterfront Corridor
+    new THREE.Vector3(2.04, 0.24, -0.35), // 13: Surface Waterfront Corridor
     new THREE.Vector3(2.04, 0.24, 2.75),  // 14: Surface Waterfront Corridor inside Track 1 viaduct
   ];
   const trackCurve2 = new THREE.CatmullRomCurve3(crlPoints, true, 'centripetal', 0.5);
