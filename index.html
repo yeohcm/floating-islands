@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Littlest Auckland — Floating 3D Diorama</title>
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <div id="canvas-container"></div>
+
+    <!-- Top-left title & live status badge -->
+    <header class="hud-header">
+      <div class="title-row">
+        <span class="koru-dot"></span>
+        <div>
+          <h1>Littlest Auckland</h1>
+          <p class="subtitle">Tāmaki Makaurau · Floating Three.js Diorama</p>
+        </div>
+      </div>
+      <div class="status-pills">
+        <span class="pill" id="train-status">🚆 AT Metro: In Transit</span>
+        <span class="pill" id="time-badge">☀️ Morning</span>
+      </div>
+    </header>
+
+    <!-- Bottom-left camera viewpoints -->
+    <nav class="hud-cameras" aria-label="Camera Presets">
+      <button class="cam-btn active" data-cam="overview">Overview</button>
+      <button class="cam-btn" data-cam="skytower">Sky Tower</button>
+      <button class="cam-btn" data-cam="train">AT Train</button>
+      <button class="cam-btn" data-cam="harbour">Harbour Bridge</button>
+      <button class="cam-btn" data-cam="mteden">Maungawhau</button>
+    </nav>
+
+    <!-- Top-right controls panel -->
+    <aside class="hud-controls">
+      <div class="control-group">
+        <span class="label">Atmosphere</span>
+        <div class="btn-row">
+          <button class="mode-btn active" data-mode="day">Day</button>
+          <button class="mode-btn" data-mode="sunset">Sunset</button>
+          <button class="mode-btn" data-mode="night">Night</button>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <span class="label">Sky Tower Lights</span>
+        <div class="swatch-row">
+          <button class="swatch active" data-light="teal" style="--c: #00e5c3" title="Waitematā Teal"></button>
+          <button class="swatch" data-light="matariki" style="--c: #a855f7" title="Matariki Purple"></button>
+          <button class="swatch" data-light="gold" style="--c: #fbbf24" title="Amber Gold"></button>
+          <button class="swatch" data-light="crimson" style="--c: #ef4444" title="Pōhutukawa Red"></button>
+          <button class="swatch" data-light="rainbow" style="--c: linear-gradient(135deg,#ef4444,#f59e0b,#10b981,#3b82f6,#a855f7)" title="Pride Spectrum"></button>
+        </div>
+      </div>
+
+      <div class="control-group row-actions">
+        <button id="toggle-play" class="action-btn">⏸ Pause</button>
+        <button id="toggle-follow" class="action-btn">🎥 Follow Train</button>
+      </div>
+    </aside>
+
+    <!-- Subtle hint & landmark tooltip -->
+    <div id="landmark-tooltip" class="tooltip hidden"></div>
+    <footer class="hud-hint">
+      Drag to orbit · Scroll to zoom · Right-drag to pan · Click landmarks to inspect
+    </footer>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
